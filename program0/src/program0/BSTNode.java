@@ -3,7 +3,7 @@ package program0;
 //////////////////// ALL ASSIGNMENTS INCLUDE THIS SECTION /////////////////////
 //
 // Title:           Binary Search Trees
-// Files:           BSTNode.java	BSTTree.java	TreeSimulations.java
+// Files:           BSTNode.java    BSTTree.java    TreeSimulations.java
 // Course:          Computer Science 400
 //
 // Author:          Sam Govier
@@ -32,8 +32,10 @@ public class BSTNode<T extends Comparable<T>> {
 
 	// data is the element content of the node
 	private T data;
+
 	// left is a reference to the left child of the node
 	private BSTNode<T> left;
+	
 	// right is a reference to the right child of the node
 	private BSTNode<T> right;
 	

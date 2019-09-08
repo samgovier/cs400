@@ -3,6 +3,8 @@ package program0;
 import java.util.Random;
 import java.util.Scanner;
 
+// TODO Change program name to BinarySearchTree
+
 public class TreeSimulations {
 	public static void testManyTrees(int randSeed, int treeSize, int randRange, int numTrees){
 		//  initial setup

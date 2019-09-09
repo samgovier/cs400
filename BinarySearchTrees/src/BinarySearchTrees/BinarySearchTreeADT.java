@@ -1,4 +1,4 @@
-package program0;
+package BinarySearchTrees;
 
 interface BinarySearchTreeADT<T extends Comparable<T>> {
 

@@ -1,9 +1,7 @@
-package program0;
+package BinarySearchTrees;
 
 import java.util.Random;
 import java.util.Scanner;
-
-// TODO Change program name to BinarySearchTree
 
 public class TreeSimulations {
 	public static void testManyTrees(int randSeed, int treeSize, int randRange, int numTrees){

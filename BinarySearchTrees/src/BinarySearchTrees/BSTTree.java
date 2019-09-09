@@ -1,4 +1,4 @@
-package program0;
+package BinarySearchTrees;
 
 //////////////////// ALL ASSIGNMENTS INCLUDE THIS SECTION /////////////////////
 //
@@ -69,11 +69,6 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T>
 		{
 			current.setRight(insert(current.getRight(), element));
 		}
-		// TODO ignore current hmm... can i get away with this?
-		// else
-		// {
-		// 	throw new IllegalArgumentException("No duplicates allowed");
-		// }
 		
 		return current;
 	}
@@ -106,100 +101,80 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T>
 		}
 		if (current.getLeft() == null && current.getRight() == null)
 		{
+			size--;
 			return null;
 		}
 		if (current.getLeft() == null)
 		{
+			size--;
 			return current.getRight();
 		}
 		if (current.getRight() == null)
 		{
+			size--;
 			return current.getLeft();
 		}
-		
-		BSTNode<T> inOrderPredecessor = null;
-		BSTNode<T> predecessorParent = current;
-		BSTNode<T> oldCurrent = current;
-		boolean found = false;
 
 		if (current.getLeft().getRight() == null)
 		{
-			inOrderPredecessor = current.getLeft();
-			found = true;
+			current.getLeft().setRight(current.getRight());
+			current = current.getLeft();
+			size--;
+			return current;
 		}
-		else
+
+		BSTNode<T> inOrderPredecessorParent = findInOrderPredecessorParent(current.getLeft());
+
+		current.setData(inOrderPredecessorParent.getRight().getData());
+
+		inOrderPredecessorParent.setRight(inOrderPredecessorParent.getRight().getLeft());
+
+		size--;
+		return current;
+
+	}
+	
+	private BSTNode<T> findInOrderPredecessorParent(BSTNode<T> current)
+	{
+		if (current.getRight().getRight() != null)
 		{
-			predecessorParent = current.getLeft();
-			current = current.getLeft().getRight();
+			findInOrderPredecessorParent(current.getRight());
 		}
 		
-		while(!found)
-		{
-			if (current.getRight() == null)
-			{
-				inOrderPredecessor = current;
-				found = true;
-			}
-			else
-			{
-				predecessorParent = current;
-				current = current.getRight();
-			}
-		}
-
-		predecessorParent.setRight(inOrderPredecessor.getLeft());
-		inOrderPredecessor.setRight(oldCurrent.getRight());
-		inOrderPredecessor.setLeft(oldCurrent.getLeft());
-		return inOrderPredecessor;
-
-		// if both children are not null … this part is harder than it seems, test carefully
-			// find the inorder predecessor
-			// copy the data from the inorder predecessor into current
-			// remove the inorder predecessor from the tree
-			// return current
-
+		return current;
 	}
 
 	public boolean contains(T element)
     {
-		if (null == find(element))
-		{
-			return false;
-		}
-
-		return true;
+		return contains(root, element);
 	}
 
-	private BSTNode<T> find(T element)
-	{
-		return find(root, element);
-	}
-
-	private BSTNode<T> find(BSTNode<T> current, T element)
+	private boolean contains(BSTNode<T> current, T element)
 	{
 		if (current == null)
 		{
-			return null;
+			return false;
 		}
 		if (element.compareTo(current.getData()) < 0)
 		{
-			return find(current.getLeft(), element);
+			return contains(current.getLeft(), element);
 		}
 		if (element.compareTo(current.getData()) > 0)
 		{
-			return find(current.getRight(), element);
+			return contains(current.getRight(), element);
 		}
 
 		// if current is not null, more, or less than the passed element,
-		// it is the same. return the matching node
-		return current;
+		// it is the same. return true
+		return true;
+
 	}
 
 	public String preOrderTraversal()
     {
 		return preOrderTraversal(root);
 	}
-
+ 
 	private String preOrderTraversal(BSTNode<T> current)
 	{
 		if (current == null)

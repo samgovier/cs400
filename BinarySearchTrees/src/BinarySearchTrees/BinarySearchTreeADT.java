@@ -2,7 +2,7 @@ package BinarySearchTrees;
 
 interface BinarySearchTreeADT<T extends Comparable<T>> {
 
-    // adds element to the tree maintaining BST rules...ignore duplicates
+  // adds element to the tree maintaining BST rules...ignore duplicates
   void insert(T element);
 
   // if element exists, remove from tree, maintaining BST rules

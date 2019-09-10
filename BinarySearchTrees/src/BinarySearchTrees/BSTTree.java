@@ -258,6 +258,30 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
   }
 
   /*
+   * uses recursive helper method to print out an inOrder traversal
+   */
+  @Override
+  public String inOrderTraversal() {
+    return inOrderTraversal(root);
+  }
+
+  /*
+   * recursive helper method
+   * 
+   * @param the root of the current subtree
+   */
+  private String inOrderTraversal(BSTNode<T> current) {
+    // if the current node is null, return an empty string
+    if (current == null) {
+      return "";
+    }
+
+    // otherwise, return this data along with the data of the children
+    return inOrderTraversal(current.getLeft()) + current.getData().toString()
+        + inOrderTraversal(current.getRight());
+  }
+
+  /*
    * method to return the height of the tree
    * 
    * @return the height of the tree

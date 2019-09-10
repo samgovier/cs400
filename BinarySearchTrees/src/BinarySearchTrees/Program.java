@@ -34,6 +34,7 @@ public class Program {
     // tree.insert(7);
     // tree.printSideways();
     // System.out.println(tree.preOrderTraversal());
+    // System.out.println(tree.inOrderTraversal());
     // System.out.println(tree.contains(8));
     // System.out.println(tree.contains(24));
     // System.out.println(tree.getHeight());

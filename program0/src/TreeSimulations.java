@@ -1,5 +1,3 @@
-package BinarySearchTrees;
-
 //////////////////// ALL ASSIGNMENTS INCLUDE THIS SECTION /////////////////////
 //
 // Title: Binary Search Trees

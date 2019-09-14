@@ -1,5 +1,3 @@
-package BinarySearchTrees;
-
 interface BinarySearchTreeADT<T extends Comparable<T>> {
 	// for p0, assume that no element values are null
 	

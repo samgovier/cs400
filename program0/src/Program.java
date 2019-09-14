@@ -1,5 +1,3 @@
-package BinarySearchTrees;
-
 public class Program {
   public static void main(String[] args) {
 
@@ -23,20 +21,20 @@ public class Program {
 
     // START BSTTree.java TESTS
 
-    // BSTTree<Integer> tree = new BSTTree<Integer>();
-    // tree.insert(7);
-    // tree.insert(3);
-    // tree.insert(4);
-    // tree.insert(6);
-    // tree.insert(9);
-    // tree.insert(1);
-    // tree.insert(8);
-    // tree.insert(7);
-    // tree.printSideways();
-    // System.out.println(tree.preOrderTraversal());
-    // System.out.println(tree.inOrderTraversal());
-    // System.out.println(tree.contains(8));
-    // System.out.println(tree.contains(24));
+    BSTTree<Integer> tree = new BSTTree<Integer>();
+    tree.insert(7);
+    tree.insert(3);
+    tree.insert(4);
+    tree.insert(6);
+    tree.insert(9);
+    tree.insert(1);
+    tree.insert(8);
+    tree.insert(7);
+    tree.printSideways();
+    System.out.println(tree.preOrderTraversal());
+    System.out.println(tree.inOrderTraversal());
+    System.out.println(tree.contains(8));
+    System.out.println(tree.contains(24));
     // System.out.println(tree.getHeight());
     // System.out.println(tree.getSize());
     // tree.remove(4);

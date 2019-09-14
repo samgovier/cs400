@@ -24,27 +24,25 @@
 import java.util.Random;
 import java.util.Scanner;
 
-/*
- * TreeSimulations contains the static test method for creating many trees
- * and computing statistics on height,
- * along with a main method to receive input.
+/**
+ * TreeSimulations contains the static test method for creating many trees and computing statistics
+ * on minimum, maximum, and average height. It also contains a main method for collecting parameters
+ * to run the test method, then runs it.
  */
 public class TreeSimulations {
 
-  /*
-   * this method generates numTrees amount of trees
-   * to test min, max, and average height
+  /**
+   * this method generates numTrees amount of trees to test minimum, maximum, and average height
    * 
-   * @param randSeed is the seed of the randomness for the inserted integers
+   * @param randSeed  is the seed of the randomness for the inserted integers
    * 
-   * @param treeSize is the maximum tree size allowed
+   * @param treeSize  is the maximum tree size allowed
    * 
    * @param randRange is the range of numbers to pull from
    * 
-   * @param numTrees is the amount of trees to generate
+   * @param numTrees  is the amount of trees to generate
    */
-  public static void testManyTrees(
-      int randSeed, int treeSize, int randRange, int numTrees) {
+  public static void testManyTrees(int randSeed, int treeSize, int randRange, int numTrees) {
 
     // tree is the value we'll use to store each random tree
     BSTTree<Integer> tree;
@@ -52,10 +50,10 @@ public class TreeSimulations {
     // rnd is the random value seeded for insert generation
     Random rnd = new Random(randSeed);
 
-    // minHeight is the min height of all random trees
+    // minHeight is the minimum height of all random trees
     int minHeight = Integer.MAX_VALUE;
 
-    // maxHeight is the max height of all random trees
+    // maxHeight is the maximum height of all random trees
     int maxHeight = 0;
 
     // avgHeight is the average height of all random trees
@@ -65,7 +63,7 @@ public class TreeSimulations {
     for (int i = 0; i < numTrees; i++) {
       tree = new BSTTree<Integer>();
 
-      // insert values until the tree is at treeSizes
+      // insert values until the tree is the correct size
       while (tree.getSize() < treeSize) {
         // insert a random integer into the tree
         tree.insert(rnd.nextInt(randRange));
@@ -77,26 +75,25 @@ public class TreeSimulations {
         tree.printSideways();
       }
 
-      // change min and max height if the new value changes that
+      // change minHeight and maxHeight if the new value is a new minimum or maximum
       minHeight = Math.min(height, minHeight);
       maxHeight = Math.max(height, maxHeight);
 
       // do the math to add in the new value and re-compute the average
-      avgHeight = 
-          ((avgHeight * (double) i) + (double) height) / ((double) i + 1d);
+      avgHeight = ((avgHeight * (double) i) + (double) height) / ((double) i + 1D);
     }
 
     // round avgHeight so it displays well
-    avgHeight = (double) Math.round(avgHeight * 10000d) / 10000d;
+    avgHeight = (double) Math.round(avgHeight * 10000D) / 10000D;
 
-    ///// after all simulated trees made, output statistics
+    // after all simulated trees made, output statistics
     System.out.println("min height was : " + minHeight);
     System.out.println("max height was : " + maxHeight);
     System.out.println("avg height was : " + avgHeight);
   }
 
-  /*
-   * This is the main method for receiving user input about testManyTrees
+  /**
+   * This is the main method for receiving parameters about testManyTrees and then running it.
    * 
    * @param args is a string of command-line arguments
    */
@@ -109,8 +106,7 @@ public class TreeSimulations {
     // get all input values
     System.out.println("Enter the Random seed number: ");
     int randSeed = scnr.nextInt();
-    System.out.println(
-        "Enter the number of Integers to be placed in each tree: ");
+    System.out.println("Enter the number of Integers to be placed in each tree: ");
     int treeSize = scnr.nextInt();
     System.out.println("Enter the maximum random integer to be generated: ");
     int randRange = scnr.nextInt();

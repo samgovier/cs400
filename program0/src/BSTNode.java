@@ -21,10 +21,12 @@
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 
-/*
- * BSTNode class contains the object definition for a Binary Search Tree node.
- * Each node is instantiated with no children and linked via setters.
- * The getHeight method is used to determine the height from the defined node.
+/**
+ * BSTNode class contains the object definition for a Binary Search Tree node. Each node is
+ * instantiated with no children. Any children are then linked via left and right setters. The
+ * getHeight method is used to determine the height from the defined node.
+ * 
+ * @param <T> is the element type of the node
  */
 public class BSTNode<T extends Comparable<T>> {
 
@@ -37,7 +39,7 @@ public class BSTNode<T extends Comparable<T>> {
   // right is a reference to the right child of the node
   private BSTNode<T> right;
 
-  /*
+  /**
    * This constructor creates the node with passed data and null children
    * 
    * @param data is the node content
@@ -48,7 +50,7 @@ public class BSTNode<T extends Comparable<T>> {
     this.right = null;
   }
 
-  /*
+  /**
    * This method returns the content of the node
    * 
    * @return the content of the node
@@ -57,7 +59,7 @@ public class BSTNode<T extends Comparable<T>> {
     return data;
   }
 
-  /*
+  /**
    * This method sets the content of the node
    * 
    * @param data is the new node content
@@ -66,7 +68,7 @@ public class BSTNode<T extends Comparable<T>> {
     this.data = data;
   }
 
-  /*
+  /**
    * This method returns the left child of the node
    * 
    * @return the left child of the node
@@ -75,7 +77,7 @@ public class BSTNode<T extends Comparable<T>> {
     return left;
   }
 
-  /*
+  /**
    * This method sets the left child of the node
    * 
    * @param left is the new left child
@@ -84,7 +86,7 @@ public class BSTNode<T extends Comparable<T>> {
     this.left = left;
   }
 
-  /*
+  /**
    * This method returns the right child of the node
    * 
    * @return the right child of the node
@@ -93,7 +95,7 @@ public class BSTNode<T extends Comparable<T>> {
     return right;
   }
 
-  /*
+  /**
    * This method sets the right child of the node
    * 
    * @param right is the new right child
@@ -102,11 +104,10 @@ public class BSTNode<T extends Comparable<T>> {
     this.right = right;
   }
 
-  /*
+  /**
    * this recursive method which finds the height from this node as the root
    * 
-   * @return the height of the tree as an integer
-   * If the node has no children, return 1
+   * @return the height of the tree as an integer If the node has no children, return 1
    */
   public int getHeight() {
     // if there are no children, return 1, as defined
@@ -125,7 +126,6 @@ public class BSTNode<T extends Comparable<T>> {
     }
 
     // if there are 2 children, return the max height between the two
-    return 1 +
-      Math.max(this.getLeft().getHeight(), this.getRight().getHeight());
+    return 1 + Math.max(this.getLeft().getHeight(), this.getRight().getHeight());
   }
 }

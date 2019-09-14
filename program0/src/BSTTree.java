@@ -21,11 +21,12 @@
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 
-/*
- * BSTTree class contains the object definition for a Binary Search Tree.
- * The tree is initialized empty, and each node must be inserted.
- * getHeight and getSize will return height and size,
- * and PreOrderTraversal will return a string representation of the tree.
+/**
+ * BSTTree class contains the object definition for a Binary Search Tree. The tree is initialized
+ * empty, and each node must be inserted. getHeight and getSize will return height and size.
+ * PreOrderTraversal and InOrderTraversal will return a string representation of the tree.
+ * 
+ * @param <T> is the element type of the tree
  */
 public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> {
   // root is the top node of the tree
@@ -34,7 +35,7 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
   // size is the amount of nodes in the tree
   private int size;
 
-  /*
+  /**
    * This constructor creates the tree with a null root and size 0
    */
   public BSTTree() {
@@ -42,9 +43,8 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     size = 0;
   }
 
-  /*
-   * calls a private recursive helper method
-   * and stores the result of that method as the new root
+  /**
+   * calls a private recursive helper method and stores the result of that method as the new root
    * 
    * @param element the element to be inserted
    */
@@ -53,13 +53,12 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     root = insert(root, element);
   }
 
-  /*
+  /**
    * private recursive helper method adds a node maintaining BST rules
    * 
    * @param current the root of this subtree
    * 
-   * @param element the element to be added
-   * if the element is a duplicate, do nothing
+   * @param element the element to be added if the element is a duplicate, do nothing
    * 
    * @return the updated reference to current
    */
@@ -84,9 +83,8 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     return current;
   }
 
-  /*
-   * calls a private recursive helper method
-   * and stores the result of that method as the new root
+  /**
+   * calls a private recursive helper method and stores the result of that method as the new root
    * 
    * @param element the element to be removed
    */
@@ -95,13 +93,12 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     root = remove(root, element);
   }
 
-  /*
+  /**
    * private recursive helper method removes a node maintaining BST rules
    * 
    * @param current the root of this subtree
    * 
-   * @param element the element to be removed
-   * if the element doesn't exist, do nothing
+   * @param element the element to be removed if the element doesn't exist, do nothing
    * 
    * @return the updated reference to current
    */
@@ -155,15 +152,13 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
 
     // find the inOrderPredecessor parent node
     // the right of the parent must be the predecessor
-    BSTNode<T> inOrderPredecessorParent =
-      findInOrderPredecessorParent(current.getLeft());
+    BSTNode<T> inOrderPredecessorParent = findInOrderPredecessorParent(current.getLeft());
 
     // set the subtree root to the data of the predecessor
     current.setData(inOrderPredecessorParent.getRight().getData());
 
     // point the parent at any remaining data from the predecessor
-    inOrderPredecessorParent.setRight(
-      inOrderPredecessorParent.getRight().getLeft());
+    inOrderPredecessorParent.setRight(inOrderPredecessorParent.getRight().getLeft());
 
     // decrement size and return the modified node
     size--;
@@ -171,9 +166,8 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
 
   }
 
-  /*
-   * second private recursive helper method
-   * find the parent of the removing root's predecessor,
+  /**
+   * second private recursive helper method to find the parent of the removing root's predecessor,
    * when it's not the immediate left node
    * 
    * @param current the root of this subtree
@@ -192,7 +186,7 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     return current;
   }
 
-  /*
+  /**
    * calls a private recursive helper method to search the tree for that element
    * 
    * @param element the element to be found
@@ -202,7 +196,7 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     return contains(root, element);
   }
 
-  /*
+  /**
    * private recursive helper method finds whether an element exists in the tree
    * 
    * @param current the root of this subtree
@@ -231,7 +225,7 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
 
   }
 
-  /*
+  /**
    * uses recursive helper method to print out a preOrder traversal
    */
   @Override
@@ -239,8 +233,8 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     return preOrderTraversal(root);
   }
 
-  /*
-   * recursive helper method
+  /**
+   * recursive helper method for preOrder traversal
    * 
    * @param the root of the current subtree
    */
@@ -251,11 +245,11 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     }
 
     // otherwise, return this data along with the data of the children
-    return current.getData().toString() + preOrderTraversal(current.getLeft())
+    return current.getData().toString() + " " + preOrderTraversal(current.getLeft())
         + preOrderTraversal(current.getRight());
   }
 
-  /*
+  /**
    * uses recursive helper method to print out an inOrder traversal
    */
   @Override
@@ -263,8 +257,8 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     return inOrderTraversal(root);
   }
 
-  /*
-   * recursive helper method
+  /**
+   * recursive helper method for inOrder traversal
    * 
    * @param the root of the current subtree
    */
@@ -275,11 +269,11 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     }
 
     // otherwise, return this data along with the data of the children
-    return inOrderTraversal(current.getLeft()) + current.getData().toString()
+    return inOrderTraversal(current.getLeft()) + current.getData().toString() + " "
         + inOrderTraversal(current.getRight());
   }
 
-  /*
+  /**
    * method to return the height of the tree
    * 
    * @return the height of the tree
@@ -294,7 +288,7 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     return root.getHeight();
   }
 
-  /*
+  /**
    * method to return the size of the tree
    * 
    * @return the number of elements in the tree
@@ -304,11 +298,9 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     return size;
   }
 
-  /*
-   * prints a tree sideways on your screen
-   * this is meant to help you debug your program source:
-   * Building Java Programs, 4th Ed., by Reges and Stepp, Ch. 17
-   * tinyurl.com/AK-02-20-19
+  /**
+   * prints a tree sideways on your screen this is meant to help you debug your program source:
+   * Building Java Programs, 4th Ed., by Reges and Stepp, Ch. 17 tinyurl.com/AK-02-20-19
    */
   public void printSideways() {
     System.out.println("------------------------------------------");
@@ -316,8 +308,8 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     System.out.println("------------------------------------------");
   }
 
-  /*
-   * private recursive helper method for printSideways above
+  /**
+   * private recursive helper method for printSideways
    */
   private void printSideways(BSTNode<T> current, String indent) {
     if (current != null) {
@@ -327,14 +319,14 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
     }
   }
 
-  /*
+  /**
    * method to print postOrderTraversal, created in class
    */
   public void postOrderTraversal() {
     postOrderTraversal(root);
   }
 
-  /*
+  /**
    * private helper recursive method for postOrderTraversal
    */
   private void postOrderTraversal(BSTNode<T> current) {
@@ -344,6 +336,5 @@ public class BSTTree<T extends Comparable<T>> implements BinarySearchTreeADT<T> 
       System.out.println(current.getData());
     }
   }
-
 
 }

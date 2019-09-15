@@ -67,7 +67,7 @@ public class StringHeap {
     return index != 1;
   }
 
-  private boolean hasleftChild(int index) {
+  private boolean hasLeftChild(int index) {
     return leftChild(index) <= size;
   }
 
@@ -169,15 +169,26 @@ public class StringHeap {
    * @return the String with the highest priority; null if the heap is empty
    */
   public String remove() {
-    // TODO implement size
-    return null;
+    String top = heap[1];
+    
+    int current = 1;
+    String temp = null;
+    while (hasLeftChild(current) || hasRightChild(current)) {
+      if (!hasLeftChild(current)) {
+        heap[current] = heap[rightChild(current)];
+        current = rightChild(current);
+      }
+    }
+    
+    size--;
+    return top;
   }
 
   /**
    * @return true if the String has no elements, false otherwise
    */
   public boolean isEmpty() {
-    return heap[1] == null;
+    return (size == 0);
   }
 
   /**
@@ -191,19 +202,27 @@ public class StringHeap {
    * @return the element with the highest priority but do not remove it
    */
   public String peek() {
-    // TODO
-    return null;
+    return heap[1];
   }
 
   /**
    * calculates the height (the number of levels past the root); an empty heap has a height of 0 a
    * heap with just a root has a height of 1
    * 
+   * Each new level can be represented by a power of 2, so taking the logarithm of 2 will give us
+   * the highest level
+   * 
    * @return the height of the heap
    */
   public int getHeight() {
-    // TODO
-    return 0;
+
+    // if the heap is empty, return 0
+    if (this.isEmpty()) {
+      return 0;
+    }
+
+    // otherwise, return log base 2 of the size + 1, which will truncate to the proper level
+    return (int) (Math.log(this.getSize()) / Math.log(2)) + 1;
   }
 
   /**
@@ -213,9 +232,30 @@ public class StringHeap {
    * 
    * @return a new String ArrayList that contains only the Strings at this level
    */
-  public ArrayList<String> getLevel(int level) {
-    // TODO
-    return null;
+  public ArrayList<String> getLevel(int level) throws IndexOutOfBoundsException {
+
+    // firstIndex is the first index of the level: 2^(level-1)
+    int firstIndex = (int) Math.pow(2, level - 1);
+
+    // lastIndex is the last index, which is just the first index of the next level - 1
+    int lastIndex = (int) Math.pow(2, level) - 1;
+
+    // if the level is less than 1 (the root), or greater than the height, throw IndexOutOfBounds
+    if ((level < 1) || (level > this.getHeight())) {
+      throw new IndexOutOfBoundsException("Level is not appropriate for this heap");
+    }
+
+    // returnList is the ArrayList we'll return at the end of the method
+    ArrayList<String> returnList = new ArrayList<String>();
+
+    // for each index of the level, add that value to returnList if it's not null
+    for (int i = firstIndex; i <= Math.min(this.getSize(), lastIndex); i++) {
+      if (heap[i] != null) {
+        returnList.add(heap[i]);
+      }
+    }
+
+    return returnList;
   }
 
   /**
@@ -240,7 +280,7 @@ public class StringHeap {
   public void printHeap() {
     System.out.println(this.getSize());
     for (int i = 1; i <= size; i++) {
-      System.out.println(heap[i]);
+      System.out.println(heap[i].trim());
     }
   }
 
@@ -249,11 +289,14 @@ public class StringHeap {
    * single whitespace
    */
   public void printLevelOrderTraversal() {
-    String result = "";
+
     for (int i = 1; i <= size; i++) {
-      result +
+      ArrayList<String> currentLevel = this.getLevel(i);
+      String levelRep = "";
+      for (int j = 0; j < currentLevel.size(); j++) {
+        levelRep += currentLevel.get(j).trim() + " ";
+      }
+      System.out.println(levelRep.trim());
     }
-    
-    System.out.println(result.trim());
   }
 }

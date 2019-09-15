@@ -46,7 +46,7 @@ public class IntegerHeap {
   }
 
   // swaps the elements at two indices in the array
-  private void swap(int[] a, int index1, int index2) {
+  private void swap(Integer[] a, int index1, int index2) {
     Integer temp = a[index1];
     a[index1] = a[index2];
     a[index2] = temp;

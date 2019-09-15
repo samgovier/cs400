@@ -5,7 +5,7 @@ public class StringHeap {
     private String[] heap;
     private int size;
 
-    /*
+    /**
      * constructor (this code is done for you)
      * 
      * @param the initial heap capacity
@@ -15,7 +15,7 @@ public class StringHeap {
         size = 0;
     }
 
-    /*
+    /**
      * determines which String has higher priority, using rules in this order:
      *  0) convert each String to lower case first, since case does not matter
      *  1) if lengths are different, the largest length String has priority
@@ -32,7 +32,7 @@ public class StringHeap {
         return 0;
     }
 
-    /*
+    /**
      * adds a String to the heap and prioritizes using the 'prioritize' method
      * 
      * @param s the string to be added (duplicate values should be added again)
@@ -42,7 +42,7 @@ public class StringHeap {
         // TODO
     }
 
-    /*
+    /**
      * removes the String with the highest priority from the queue and adjusts the heap
      * to maintain priority rules
      * 
@@ -53,7 +53,7 @@ public class StringHeap {
         return null;
     }
 
-    /*
+    /**
      * @return true if the String has no elements, false otherwise
      */
     public boolean isEmpty() {
@@ -61,7 +61,7 @@ public class StringHeap {
         return false;
     }
 
-    /*
+    /**
      * @return the number of Strings stored in the heap
      */
     public int getSize() {
@@ -69,7 +69,7 @@ public class StringHeap {
         return 0;
     }
 
-    /*
+    /**
      * @return the element with the highest priority but do not remove it
      */
     public String peek() {
@@ -77,7 +77,7 @@ public class StringHeap {
         return null;
     }
 
-    /*
+    /**
      * calculates the height (the number of levels past the root); an empty heap has a
      * height of 0 a heap with just a root has a height of 1
      * 
@@ -88,7 +88,7 @@ public class StringHeap {
         return 0;
     }
 
-    /*
+    /**
      * a new ArrayList containing all Strings at this level
      *  - may not contain null values
      *  - an empty heap will result in returning an empty ArrayList
@@ -101,7 +101,7 @@ public class StringHeap {
         return null;
     }
 
-    /*
+    /**
      * returns a deep copy of the heap array, but not the actual heap object so that
      * the original heap remains unchangeable outside this class
      *  - will be used by the autograder
@@ -115,7 +115,7 @@ public class StringHeap {
         return null;
     }
 
-    /*
+    /**
      * prints out heap size, then prints out the heap elements
      *  - one per line following the indexing of the heap array
      */
@@ -123,7 +123,7 @@ public class StringHeap {
         // TODO
     }
 
-    /*
+    /**
      * prints out level-order traversal of the heap
      *  - one level per line with nodes delimited by a single whitespace
      */
@@ -132,8 +132,4 @@ public class StringHeap {
     }
 
     // you are welcome to add private methods
-
-    public static void main(String[] args) {
-        // you do not need a main method, but you can use it to test your code
-    }
 }

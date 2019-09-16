@@ -17,12 +17,12 @@ public class Program {
     System.out.println(StringHeap.prioritize(test3, test4));
     System.out.println(StringHeap.prioritize(test4, test5));
     
-//    testHeap.add(test1);
-//    testHeap.add(test2);
-//    testHeap.add(test3);
-//    testHeap.add(test2);
-//    testHeap.add(test4);
-//    testHeap.add(test5);
+    testHeap.add(test1);
+    testHeap.add(test2);
+    testHeap.add(test3);
+    testHeap.add(test2);
+    testHeap.add(test4);
+    testHeap.add(test5);
     
     testHeap.add("a");
     testHeap.add("b");
@@ -42,6 +42,12 @@ public class Program {
     testHeap.printLevelOrderTraversal();
     
     System.out.println(testHeap.remove());
+    
+    testHeap.remove();
+    testHeap.remove();
+    testHeap.remove();
+    testHeap.remove();
+    testHeap.remove();
     
     testHeap.printHeap();
     testHeap.printLevelOrderTraversal();

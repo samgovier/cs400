@@ -38,11 +38,66 @@ public class HeapRunner {
    */
   public static void main(String[] args) {
     // instantiate your heap
-    StringHeap heap = new StringHeap(5);
+    StringHeap heap;
+    
+    String[] testFileNames = new String[] { "words1.txt", "words2.txt" };
+    
+    for (String fileName : testFileNames) {
+
+      System.out.println("Adding words from " + fileName + " without removing...\n");
+      
+      // fill the heap with the given file and print heap details
+      heap = fillHeap(fileName);
+      printFullHeapDetails(heap);
+    }
+    
+    // new line between tests
+    System.out.println();
+    
+    for (String fileName : testFileNames) {
+      System.out.println("Adding words from " + fileName + " and calling remove() once...\n");
+      
+      // fill the heap with the given file
+      heap = fillHeap(fileName);
+
+      // calling remove() once
+      heap.remove();
+      
+      // print heap details
+      printFullHeapDetails(heap);
+
+    }
+  }
+
+  /**
+   * @param heap
+   */
+  private static void printFullHeapDetails(StringHeap heap) {
+    // print out heap using printHeap()
+    heap.printHeap();
+
+    // print method delimiter
+    System.out.println("------------------------------");
+
+    // print out heap using printLevelOrderTraversal()
+    heap.printLevelOrderTraversal();
+    
+    // new line for next output
+    System.out.println();
+  }
+
+  /**
+   * @param fileName
+   * @return
+   */
+  private static StringHeap fillHeap(String fileName) {
+    StringHeap heap;
+    // instantiate the heap
+    heap = new StringHeap(5);
 
     // add a try/catch block to make the code below compile
     try {
-      Scanner scnr = new Scanner(new File("words2.txt"));
+      Scanner scnr = new Scanner(new File(fileName));
       while (scnr.hasNextLine()) {
         String word = scnr.nextLine();
         heap.add(word);
@@ -55,14 +110,6 @@ public class HeapRunner {
       // print the error message
       System.out.println(ex.getMessage());
     }
-
-    // print out heap using printHeap()
-    heap.printHeap();
-
-    // print method delimiter
-    System.out.println("------------------------------");
-
-    // print out heap using printLevelOrderTraversal()
-    heap.printLevelOrderTraversal();
+    return heap;
   }
 }

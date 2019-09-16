@@ -24,11 +24,11 @@ import java.util.Arrays;
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 
-// TODO javadoc @param, @returns, @throws
-
 /**
  * StringHeap contains the object definition for a String Heap. The heap is initialized as empty,
- * and each node is inserted.
+ * and each node is inserted. Priority is considered using first length, then vowel amount, then
+ * alphabetical. The top node can be peeked or removed, and other details on height and size can
+ * retrieved or printed.
  *
  */
 public class StringHeap {
@@ -36,7 +36,7 @@ public class StringHeap {
   // heap is the backing array for the string heap
   private String[] heap;
 
-  // size is the size of the heap
+  // size is the amount of elements in the heap
   private int size;
 
   // initialize un-modifiable vowels array for use in prioritization
@@ -45,7 +45,7 @@ public class StringHeap {
   /**
    * this constructor creates the empty heap with size 0
    * 
-   * @param capacity is the initial heap capacity
+   * @param capacity is the initial heap array capacity
    */
   public StringHeap(int capacity) {
     heap = new String[capacity];
@@ -113,8 +113,7 @@ public class StringHeap {
   }
 
   private boolean hasParent(int index) {
-    // TODO this is... not enough
-    return index != 1;
+    return index > 1;
   }
 
   private void swap(String[] modifyingArray, int index1, int index2) {
@@ -131,14 +130,14 @@ public class StringHeap {
    */
   public void add(String value) {
 
-    if ((value == null) || value.isBlank()) {
+    if ((value == null) || value == "") {
       throw new IllegalArgumentException("Input string is not a valid element");
     }
 
     if (size >= heap.length - 1) {
       heap = Arrays.copyOf(heap, heap.length * 2);
     }
-    
+
     size++;
     heap[size] = value;
 
@@ -188,8 +187,7 @@ public class StringHeap {
     heap[current] = heap[size];
     heap[size] = null;
     size--;
-    
-    // TODO double check the parent and child have correct priority?
+
     // while the current node has a child (if it has a child, it must be left)
     while (hasLeftChild(current)) {
 
@@ -251,9 +249,10 @@ public class StringHeap {
 
   /**
    * a new ArrayList containing all Strings at this level - may not contain null values - an empty
-   * heap will result in returning an empty ArrayList - throws an IndexOutOfBoundsException if level
-   * is not appropriate for this heap
+   * heap will result in returning an empty ArrayList
    * 
+   * @param level is the level to collect elements from
+   * @throws IndexOutOfBoundsException if level is not appropriate for this heap
    * @return a new String ArrayList that contains only the Strings at this level
    */
   public ArrayList<String> getLevel(int level) throws IndexOutOfBoundsException {
@@ -320,7 +319,7 @@ public class StringHeap {
       for (int j = 0; j < currentLevel.size(); j++) {
         levelRep += currentLevel.get(j).trim() + " ";
       }
-      System.out.println(levelRep.trim());
+      System.out.println(levelRep);
     }
   }
 }

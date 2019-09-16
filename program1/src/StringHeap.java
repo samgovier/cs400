@@ -24,6 +24,8 @@ import java.util.Arrays;
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 
+// TODO javadoc @param, @returns, @throws
+
 /**
  * StringHeap contains the object definition for a String Heap. The heap is initialized as empty,
  * and each node is inserted.
@@ -48,37 +50,6 @@ public class StringHeap {
   public StringHeap(int capacity) {
     heap = new String[capacity];
     size = 0;
-  }
-
-  private int parent(int index) {
-    return index / 2;
-  }
-
-  private int leftChild(int index) {
-    return index * 2;
-  }
-
-  private int rightChild(int index) {
-    return (index * 2) + 1;
-  }
-
-  private boolean hasParent(int index) {
-    // TODO this is... not enough
-    return index != 1;
-  }
-
-  private boolean hasLeftChild(int index) {
-    return leftChild(index) <= size;
-  }
-
-  private boolean hasRightChild(int index) {
-    return rightChild(index) <= size;
-  }
-
-  private void swap(String[] modifyingArray, int index1, int index2) {
-    String temp = modifyingArray[index1];
-    modifyingArray[index1] = modifyingArray[index2];
-    modifyingArray[index2] = temp;
   }
 
   /**
@@ -137,6 +108,21 @@ public class StringHeap {
     return first.compareTo(second);
   }
 
+  private int parent(int index) {
+    return index / 2;
+  }
+
+  private boolean hasParent(int index) {
+    // TODO this is... not enough
+    return index != 1;
+  }
+
+  private void swap(String[] modifyingArray, int index1, int index2) {
+    String temp = modifyingArray[index1];
+    modifyingArray[index1] = modifyingArray[index2];
+    modifyingArray[index2] = temp;
+  }
+
   /**
    * adds a String to the heap and prioritizes using the 'prioritize' method
    * 
@@ -147,6 +133,13 @@ public class StringHeap {
     // TODO check if the heap is full, if so make a new one, shadow array,
     // https://stackoverflow.com/questions/12300854/what-is-a-shadow-array
 
+    if ((value == null) || value.isBlank()) {
+      throw new IllegalArgumentException("Input string is not a valid element");
+    }
+
+    if (size >= heap.length - 1) {
+      heap = Arrays.copyOf(heap, heap.length * 2);
+    }
     size++;
     heap[size] = value;
 
@@ -162,6 +155,22 @@ public class StringHeap {
     }
   }
 
+  private int leftChild(int index) {
+    return index * 2;
+  }
+
+  private int rightChild(int index) {
+    return (index * 2) + 1;
+  }
+
+  private boolean hasLeftChild(int index) {
+    return leftChild(index) <= size;
+  }
+
+  private boolean hasRightChild(int index) {
+    return rightChild(index) <= size;
+  }
+
   /**
    * removes the String with the highest priority from the queue and adjusts the heap to maintain
    * priority rules
@@ -169,19 +178,33 @@ public class StringHeap {
    * @return the String with the highest priority; null if the heap is empty
    */
   public String remove() {
-    String top = heap[1];
-    
+
     int current = 1;
-    String temp = null;
+
     while (hasLeftChild(current) || hasRightChild(current)) {
       if (!hasLeftChild(current)) {
-        heap[current] = heap[rightChild(current)];
+        this.swap(heap, current, rightChild(current));;
+        current = rightChild(current);
+      }
+      else if (!hasRightChild(current)) {
+        this.swap(heap, current, leftChild(current));
+        current = leftChild(current);
+      }
+      else if ((StringHeap.prioritize(heap[leftChild(current)], heap[rightChild(current)])) >= 0) {
+        this.swap(heap, current, leftChild(current));
+        current = leftChild(current);
+      }
+      else if ((StringHeap.prioritize(heap[rightChild(current)], heap[leftChild(current)])) > 0) {
+        this.swap(heap, current, rightChild(current));;
         current = rightChild(current);
       }
     }
-    
+
+    String returnString = heap[current];
+    heap[current] = null;
     size--;
-    return top;
+    
+    return returnString;
   }
 
   /**
@@ -242,7 +265,7 @@ public class StringHeap {
 
     // if the level is less than 1 (the root), or greater than the height, throw IndexOutOfBounds
     if ((level < 1) || (level > this.getHeight())) {
-      throw new IndexOutOfBoundsException("Level is not appropriate for this heap");
+      throw new IndexOutOfBoundsException("Level is not valid for this heap");
     }
 
     // returnList is the ArrayList we'll return at the end of the method
@@ -278,7 +301,7 @@ public class StringHeap {
    * of the heap array
    */
   public void printHeap() {
-    System.out.println(this.getSize());
+    System.out.println("HEAP SIZE: " + this.getSize());
     for (int i = 1; i <= size; i++) {
       System.out.println(heap[i].trim());
     }
@@ -290,7 +313,7 @@ public class StringHeap {
    */
   public void printLevelOrderTraversal() {
 
-    for (int i = 1; i <= size; i++) {
+    for (int i = 1; i <= this.getHeight(); i++) {
       ArrayList<String> currentLevel = this.getLevel(i);
       String levelRep = "";
       for (int j = 0; j < currentLevel.size(); j++) {

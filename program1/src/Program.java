@@ -17,14 +17,17 @@ public class Program {
     System.out.println(StringHeap.prioritize(test3, test4));
     System.out.println(StringHeap.prioritize(test4, test5));
     
-    System.out.println((int)(Math.log(6) / Math.log(2)) + 1);
-    
-//    testHeap.add(test1);
+    testHeap.add(test1);
 //    testHeap.add(test2);
 //    testHeap.add(test3);
 //    testHeap.add(test2);
 //    testHeap.add(test4);
 //    testHeap.add(test5);
+    
+    String[] copiedHeap = testHeap.getHeap();
+    
+    System.out.println("Hello again");
+    
   }
 
 }

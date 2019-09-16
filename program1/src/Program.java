@@ -25,16 +25,16 @@ public class Program {
     testHeap.add(test5);
     
     testHeap.add("a");
-    testHeap.add("b");
-    testHeap.add("c");
-    testHeap.add("d");
-    testHeap.add("e");
-    testHeap.add("f");
-    testHeap.add("g");
-    testHeap.add("h");
-    testHeap.add("i");
-    testHeap.add("j");
-    testHeap.add("k");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
+    testHeap.add("a");
 
     String[] copiedHeap = testHeap.getHeap();
     

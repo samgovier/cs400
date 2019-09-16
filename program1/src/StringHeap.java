@@ -130,8 +130,6 @@ public class StringHeap {
    * @throws IllegalArgumentException if the value is null or an empty String
    */
   public void add(String value) {
-    // TODO check if the heap is full, if so make a new one, shadow array,
-    // https://stackoverflow.com/questions/12300854/what-is-a-shadow-array
 
     if ((value == null) || value.isBlank()) {
       throw new IllegalArgumentException("Input string is not a valid element");
@@ -140,6 +138,7 @@ public class StringHeap {
     if (size >= heap.length - 1) {
       heap = Arrays.copyOf(heap, heap.length * 2);
     }
+    
     size++;
     heap[size] = value;
 
@@ -179,22 +178,22 @@ public class StringHeap {
    */
   public String remove() {
 
+    if (this.isEmpty()) {
+      return null;
+    }
+
     int current = 1;
 
-    while (hasLeftChild(current) || hasRightChild(current)) {
-      if (!hasLeftChild(current)) {
-        this.swap(heap, current, rightChild(current));;
-        current = rightChild(current);
-      }
-      else if (!hasRightChild(current)) {
+    // while the current node has a child (if it has a child, it must be left)
+    while (hasLeftChild(current)) {
+
+      if (!hasRightChild(current)
+          || ((StringHeap.prioritize(heap[leftChild(current)], heap[rightChild(current)])) > 0)) {
         this.swap(heap, current, leftChild(current));
         current = leftChild(current);
       }
-      else if ((StringHeap.prioritize(heap[leftChild(current)], heap[rightChild(current)])) >= 0) {
-        this.swap(heap, current, leftChild(current));
-        current = leftChild(current);
-      }
-      else if ((StringHeap.prioritize(heap[rightChild(current)], heap[leftChild(current)])) > 0) {
+
+      else if ((StringHeap.prioritize(heap[rightChild(current)], heap[leftChild(current)])) >= 0) {
         this.swap(heap, current, rightChild(current));;
         current = rightChild(current);
       }
@@ -203,7 +202,7 @@ public class StringHeap {
     String returnString = heap[current];
     heap[current] = null;
     size--;
-    
+
     return returnString;
   }
 

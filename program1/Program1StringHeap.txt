@@ -1,0 +1,78 @@
+Program 1 StringHeap		due Sept 24
+
+
+In this programming assignment, you will be implementing a Priority Queue of Strings with a MaxHeap.  
+
+You will write two classes, StringHeap.java and HeapRunner.java
+The StringHeap.java class will maintain a MaxHeap. 
+The HeapRunner.java class will read words from a file and then add them to the heap. It will also remove some elements from the Heap.
+
+words1.txt and words2.txt are example text files for HeapRunner.
+
+You will submit the two classes that you wrote (StringHeap.java and HeapRunner.java) to ZyBooks for testing. Zybooks will have tests worth 10 points, and we will run additional tests after submission worth 15 points. Style and Comments will be worth 5 points.
+
+Example Output:
+
+Adding words from words1.txt without removing...
+
+HEAP SIZE: 5
+Detroit
+Houston
+Madison
+Seattle
+Boise
+------------------------------
+Detroit 
+Houston Madison 
+Seattle Boise 
+
+Adding words from words2.txt without removing...
+
+HEAP SIZE: 10
+grapefruit
+watermelon
+strawberry
+orange
+banana
+pear
+peach
+apple
+mango
+papaya
+------------------------------
+grapefruit 
+watermelon strawberry 
+orange banana pear peach 
+apple mango papaya 
+
+
+Adding words from words1.txt and calling remove() once...
+
+HEAP SIZE: 4
+Houston
+Seattle
+Madison
+Boise
+------------------------------
+Houston 
+Seattle Madison 
+Boise 
+
+Adding words from words2.txt and calling remove() once…
+
+HEAP SIZE: 9
+watermelon
+banana
+strawberry
+orange
+papaya
+pear
+peach
+apple
+mango
+------------------------------
+watermelon 
+banana strawberry 
+orange papaya pear peach 
+apple mango 
+

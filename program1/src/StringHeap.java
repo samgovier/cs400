@@ -105,7 +105,7 @@ public class StringHeap {
     }
 
     // at this point, just use compareTo() for alphabetical comparison
-    return first.compareTo(second);
+    return second.compareTo(first);
   }
 
   private int parent(int index) {
@@ -184,6 +184,12 @@ public class StringHeap {
 
     int current = 1;
 
+    String returnString = heap[current];
+    heap[current] = heap[size];
+    heap[size] = null;
+    size--;
+    
+    // TODO double check the parent and child have correct priority?
     // while the current node has a child (if it has a child, it must be left)
     while (hasLeftChild(current)) {
 
@@ -198,10 +204,6 @@ public class StringHeap {
         current = rightChild(current);
       }
     }
-
-    String returnString = heap[current];
-    heap[current] = null;
-    size--;
 
     return returnString;
   }

@@ -37,10 +37,59 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   private class TreeNode<K, V> {
     private K key;
     private V value;
-    private int height;
+    //TODO implement (?) private int height;
     private TreeNode<K, V> left, right;
 
-    // TODO: constructor
+    private TreeNode(K key, V value) {
+      this.key = key;
+      this.value = value;
+      this.left = null;
+      this.right = null;
+      //TODO implement (?) this.height = 1;
+    }
+    
+    /**
+     * this recursive method which finds the height from this node as the root
+     * 
+     * @return the height of the tree as an integer If the node has no children, return 1
+     */
+    private int getHeight() {
+      // if there are no children, return 1, as defined
+      if (this.left == null && this.right == null) {
+        return 1;
+      }
+
+      // otherwise, if there is no left child, return 1 + the right height
+      if (this.left == null) {
+        return 1 + this.right.getHeight();
+      }
+
+      // otherwise, if there is no right child, return 1 + the left height
+      if (this.right == null) {
+        return 1 + this.left.getHeight();
+      }
+
+      // if there are 2 children, return the max height between the two
+      return 1 + Math.max(this.left.getHeight(), this.right.getHeight());
+    }
+    
+    /**
+     * this method finds the balance factor of the node. negative means left is bigger, positive
+     * means right is bigger. 0 is perfect balance.
+     * 
+     * @return an integer representing the balance of this node per its children
+     */
+    private int getBalance() {
+      if (this.left == null && this.right == null) {
+        return 0;
+      } else if (this.left == null) {
+        return right.getHeight();
+      } else if (this.right == null) {
+        return left.getHeight();
+      }
+
+      return left.getHeight() - right.getHeight();
+    }
   }
 
   /**
@@ -48,7 +97,9 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * 
    * @return true if tree contains 0 items
    */
-  public boolean isEmpty();
+  public boolean isEmpty() {
+    return null == root;
+  }
 
   /**
    * Adds a key, value pair to the tree.
@@ -81,12 +132,19 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * Returns the AVL tree in pre-order traversal. The string that is returned will have each node's
    * key separated by a whitespace. Example: "MKE ATL MSN LAX".
    */
-  public String preOrderTraversal();
+  public String preOrderTraversal() {
+    return preOrderTraversal(root);
+  }
 
-  /**
-   * Prints AVL tree sideways to show structure. This method may help you debug your implementation.
-   */
-  public void printSideways();
+  private String preOrderTraversal(TreeNode<K, V> current) {
+    if (current == null) {
+      return "";
+    }
+
+    // otherwise
+    return current.key.toString() + " " + preOrderTraversal(current.left)
+        + preOrderTraversal(current.left);
+  }
 
   /**
    * AVLTree rotate left.

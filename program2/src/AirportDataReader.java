@@ -45,6 +45,8 @@ public class AirportDataReader {
 				String[] data = row.split(",");
 
 					// TODO: extract airport data: ID, city, name
+				Airport insert = new Airport(data[0], data[1], data[2]);
+				tree.insert(data[0], insert);
 					// TODO: create airport object
 					// TODO: insert airport into tree
 					// TODO: catch exceptions
@@ -55,6 +57,13 @@ public class AirportDataReader {
 			System.out.println("File not found.");
 		}
 
+		boolean quit = false;
+		
+		do {
+		  Scanner stdin = new Scanner(System.in);
+		  String nextInput = stdin.next();
+		  
+		} while (!quit);
 		// TODO: prompt user to look up airport
 		// TODO: accept user input of 3-digit code
 		// TODO: get airport object, print to standard output

@@ -27,46 +27,72 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
- * Reads in airport data from a CSV file, constructs an AVL tree, and prompts user to look up an airport.
+ * Reads in airport data from a CSV file, constructs an AVL tree, and prompts user to look up an
+ * airport.
  */
 public class AirportDataReader {
-	/**
-	 * Main method.
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		AVLTree<String, Airport> tree = new AVLTree<String, Airport>();
+  /**
+   * Main method.
+   * 
+   * @param args
+   */
+  public static void main(String[] args) {
+    AVLTree<String, Airport> tree = new AVLTree<String, Airport>();
 
-		// parse csv
-		try {
-			Scanner csvScnr = new Scanner(new File("airportdata.csv"));
-			while (csvScnr.hasNextLine()) {
-				String row = csvScnr.nextLine();
-				String[] data = row.split(",");
+    // parse csv
+    try {
+      Scanner csvScnr = new Scanner(new File("airportdata.csv"));
+      
+      // skip the first line of headers
+      csvScnr.nextLine();
+      while (csvScnr.hasNextLine()) {
+        String row = csvScnr.nextLine();
+        String[] data = row.split(",");
+        try {
+          tree.insert(data[3], new Airport(data[3], data[4], data[5]));
 
-					// TODO: extract airport data: ID, city, name
-				Airport insert = new Airport(data[0], data[1], data[2]);
-				tree.insert(data[0], insert);
-					// TODO: create airport object
-					// TODO: insert airport into tree
-					// TODO: catch exceptions
+        } catch (IllegalKeyException e1) {
+          System.out.println(e1.getMessage());
+        } catch (DuplicateKeyException e2) {
+          System.out.println(e2.getMessage());
+        }
 
-			}
-			csvScnr.close();
-		} catch (FileNotFoundException e1) {
-			System.out.println("File not found.");
-		}
+      }
+      csvScnr.close();
+    } catch (FileNotFoundException e1) {
+      System.out.println("File not found.");
+    }
 
-		boolean quit = false;
-		
-		do {
-		  Scanner stdin = new Scanner(System.in);
-		  String nextInput = stdin.next();
-		  
-		} while (!quit);
-		// TODO: prompt user to look up airport
-		// TODO: accept user input of 3-digit code
-		// TODO: get airport object, print to standard output
-		// TODO: exit when a user enters an airport code that is not found
-	}
+    boolean quit = false;
+    Scanner stdin = new Scanner(System.in);
+    do {
+      System.out.print("Enter 3-digit airport id: ");
+      String userInput = stdin.nextLine();
+
+      if (userInput.toLowerCase() == "quit") {
+        quit = true;
+      }
+      if ((userInput == null) || (userInput.length() != 3)) {
+        System.out.println("Please enter a 3-digit airport code.");
+      } else {
+        Airport airportLookup = null;
+        try {
+          airportLookup = tree.get(userInput);
+        } catch (IllegalKeyException ie) {
+          System.out.println(ie.getMessage());
+        }
+        
+        if (airportLookup == null) {
+          System.out.println("Airport code not found.");
+          quit = true;
+        }
+        else {
+          System.out.println(airportLookup.toString());
+        }
+      }
+
+    } while (!quit);
+
+    stdin.close();
+  }
 }

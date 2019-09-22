@@ -26,18 +26,17 @@
 // but you can add any private methods or fields
 
 public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
-  public TreeNode<K, V> root = null;
 
   /**
    * Inner class representing a node of the AVL tree.
    * 
-   * @param <K>
-   * @param <V>
+   * @param <K> is the key data type
+   * @param <V> is the value data type
    */
   private class TreeNode<K, V> {
     private K key;
     private V value;
-    //TODO implement (?) private int height;
+    // TODO implement (?) private int height;
     private TreeNode<K, V> left, right;
 
     private TreeNode(K key, V value) {
@@ -45,9 +44,9 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       this.value = value;
       this.left = null;
       this.right = null;
-      //TODO implement (?) this.height = 1;
+      // TODO implement (?) this.height = 1;
     }
-    
+
     /**
      * this recursive method which finds the height from this node as the root
      * 
@@ -72,12 +71,12 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       // if there are 2 children, return the max height between the two
       return 1 + Math.max(this.left.getHeight(), this.right.getHeight());
     }
-    
+
     /**
      * this method finds the balance factor of the node. negative means left is bigger, positive
      * means right is bigger. 0 is perfect balance.
      * 
-     * @return an integer representing the balance of this node per its children
+     * @return an integer representing the balance of this node
      */
     private int getBalance() {
       if (this.left == null && this.right == null) {
@@ -92,10 +91,20 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     }
   }
 
+  // root is the top node of the tree
+  private TreeNode<K, V> root;
+
+  /**
+   * This constructor creates the tree with a null root
+   */
+  public AVLTree() {
+    root = null;
+  }
+
   /**
    * Checks for an empty tree.
    * 
-   * @return true if tree contains 0 items
+   * @return true if root is empty
    */
   public boolean isEmpty() {
     return null == root;
@@ -109,7 +118,38 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @throws DuplicateKeyException if the key has already been inserted into the tree
    * @throws IllegalKeyException   if the key is null
    */
-  public void insert(K key, V value) throws DuplicateKeyException, IllegalKeyException;
+  public void insert(K key, V value) throws DuplicateKeyException, IllegalKeyException {
+    insert(root, key, value);
+  }
+
+  /**
+   * 
+   * @param current
+   * @param key
+   * @param value
+   * @throws DuplicateKeyException
+   * @throws IllegalKeyException
+   */
+  private void insert(TreeNode<K, V> current, K key, V value)
+      throws DuplicateKeyException, IllegalKeyException {
+    if (current == null) {
+      // set the current null location to the inserted element
+      current = new TreeNode<K, V>(key, value);
+    }
+
+    // if the element is smaller than current, go left
+    else if (key.compareTo(current.key) < 0) {
+      current.left = insert(current, key, value);
+    }
+
+    // if the element is greater than current, go right
+    else if (key.compareTo(current.key) > 0) {
+      current.right = insert(current, key, value);
+    }
+    
+    // TODO correct to void method
+    return current;
+  }
 
   /**
    * Removes a key from the AVL tree. Returns nothing if the key is not found.
@@ -117,34 +157,21 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @param key
    * @throws IllegalKeyException if attempt to delete null
    */
-  public void delete(K key) throws IllegalKeyException;
+  public void delete(K key) throws IllegalKeyException {
+    delete(root, key);
+  }
 
   /**
-   * Get a value in the tree given the key.
    * 
+   * @param current
    * @param key
-   * @return value the object associated with this key
-   * @throws IllegalArgumentException if the key is null
+   * @throws IllegalKeyException
    */
-  public V get(K key) throws IllegalKeyException;
+  private void delete(TreeNode<K, V> curent, K key) throws IllegalKeyException {
+    // TODO Auto-generated method stub
 
-  /**
-   * Returns the AVL tree in pre-order traversal. The string that is returned will have each node's
-   * key separated by a whitespace. Example: "MKE ATL MSN LAX".
-   */
-  public String preOrderTraversal() {
-    return preOrderTraversal(root);
   }
 
-  private String preOrderTraversal(TreeNode<K, V> current) {
-    if (current == null) {
-      return "";
-    }
-
-    // otherwise
-    return current.key.toString() + " " + preOrderTraversal(current.left)
-        + preOrderTraversal(current.left);
-  }
 
   /**
    * AVLTree rotate left.
@@ -168,6 +195,55 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     return root;
   }
 
+  /**
+   * Get a value in the tree given the key. If the value isn't in the tree, return null.
+   * 
+   * @param key
+   * @return value the object associated with this key
+   * @throws IllegalArgumentException if the key is null
+   */
+  public V get(K key) throws IllegalKeyException {
+    return get(root, key);
+  }
+
+  private V get(TreeNode<K, V> current, K key) throws IllegalKeyException {
+
+    // if the current element is null, the tree has ended, return false
+    if (current == null) {
+      return null;
+    }
+
+    // if the element is smaller than current, go left
+    if (key.compareTo(current.key) < 0) {
+      return get(current.left, key);
+    }
+
+    // if the element is greater than current, go right
+    if (key.compareTo(current.key) > 0) {
+      return get(current.right, key);
+    }
+
+    // if current is not null, more, or less than the passed key, it's the same.
+    return current.value;
+  }
+
+  /**
+   * Returns the AVL tree in pre-order traversal. The string that is returned will have each node's
+   * key separated by a whitespace. Example: "MKE ATL MSN LAX".
+   */
+  public String preOrderTraversal() {
+    return preOrderTraversal(root);
+  }
+
+  private String preOrderTraversal(TreeNode<K, V> current) {
+    if (current == null) {
+      return "";
+    }
+
+    // otherwise
+    return current.key.toString() + " " + preOrderTraversal(current.left)
+        + preOrderTraversal(current.left);
+  }
 
   /**
    * Print a tree sideways to show structure. This code is completed for you.

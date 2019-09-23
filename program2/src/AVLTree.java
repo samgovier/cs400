@@ -119,7 +119,11 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @throws IllegalKeyException   if the key is null
    */
   public void insert(K key, V value) throws DuplicateKeyException, IllegalKeyException {
-    insert(root, key, value);
+    if (null == key) {
+      throw new IllegalKeyException("key is null");
+    }
+
+    root = insert(root, key, value);
   }
 
   /**
@@ -127,29 +131,35 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @param current
    * @param key
    * @param value
+   * @return
    * @throws DuplicateKeyException
-   * @throws IllegalKeyException
    */
-  private void insert(TreeNode<K, V> current, K key, V value)
-      throws DuplicateKeyException, IllegalKeyException {
+  private TreeNode<K, V> insert(TreeNode<K, V> current, K key, V value)
+      throws DuplicateKeyException {
     if (current == null) {
       // set the current null location to the inserted element
       current = new TreeNode<K, V>(key, value);
     }
 
+    else if (key.compareTo(current.key) == 0) {
+      throw new DuplicateKeyException("The key has already been inserted into the tree");
+    }
     // if the element is smaller than current, go left
     else if (key.compareTo(current.key) < 0) {
-      current.left = insert(current, key, value);
+      current.left = insert(current.left, key, value);
     }
 
     // if the element is greater than current, go right
     else if (key.compareTo(current.key) > 0) {
-      current.right = insert(current, key, value);
+      current.right = insert(current.right, key, value);
     }
-    
-    // TODO correct to void method
+
     return current;
+
+
   }
+
+
 
   /**
    * Removes a key from the AVL tree. Returns nothing if the key is not found.
@@ -158,20 +168,90 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @throws IllegalKeyException if attempt to delete null
    */
   public void delete(K key) throws IllegalKeyException {
-    delete(root, key);
+    if (null == key) {
+      throw new IllegalKeyException("key is null");
+    }
+
+    root = delete(root, key);
   }
 
   /**
    * 
    * @param current
    * @param key
-   * @throws IllegalKeyException
+   * @return
    */
-  private void delete(TreeNode<K, V> curent, K key) throws IllegalKeyException {
-    // TODO Auto-generated method stub
+  private TreeNode<K, V> delete(TreeNode<K, V> current, K key) {
 
+    // if we're at a null node, the element doesn't exist, return nothing
+    if (current == null) {
+      return null;
+    }
+    // if the element is smaller than current, go left
+    if (key.compareTo(current.key) < 0) {
+      current.left = delete(current.left, key);
+      return current;
+    }
+    // if the element is greater than current, go right
+    if (key.compareTo(current.key) > 0) {
+      current.right = delete(current.right, key);
+      return current;
+    }
+
+    // if we're here, we've found the right element. Begin removal
+
+    // if there are no children, set this node to null
+    if (current.left == null && current.right == null) {
+      return null;
+    }
+
+    // if there is only one child, decrement size and bring child up
+    if (current.left == null) {
+      return current.right;
+    }
+    if (current.right == null) {
+      return current.left;
+    }
+
+    // in the case where the immediate left node is the predecessor, set the new node
+    if (current.left.right == null) {
+      // point the predecessor at the current right node
+      current.left.right = current.right;
+
+      // set the current node to the predecessor
+      current = current.left;
+
+      return current;
+    }
+
+    // find the inOrderPredecessor parent node
+    // the right of the parent must be the predecessor
+    TreeNode<K, V> inOrderPredecessorParent = findInOrderPredecessorParent(current.left);
+
+    // set the subtree root to the data of the predecessor
+    current.key = inOrderPredecessorParent.right.key;
+    current.value = inOrderPredecessorParent.right.value;
+
+    // point the parent at any remaining data from the predecessor
+    inOrderPredecessorParent.right = inOrderPredecessorParent.right.left;
+
+    return current;
   }
 
+  /**
+   * 
+   * @param current
+   * @return
+   */
+  private TreeNode<K, V> findInOrderPredecessorParent(TreeNode<K, V> current) {
+    // if the right child of the right child isn't null, this right child isn't the predecessor
+    if (current.right.right != null) {
+      findInOrderPredecessorParent(current.right);
+    }
+
+    // if the right child of the right child IS null, the right child is predecessor, return parent
+    return current;
+  }
 
   /**
    * AVLTree rotate left.
@@ -203,10 +283,14 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @throws IllegalArgumentException if the key is null
    */
   public V get(K key) throws IllegalKeyException {
+    if (null == key) {
+      throw new IllegalKeyException("key is null");
+    }
+
     return get(root, key);
   }
 
-  private V get(TreeNode<K, V> current, K key) throws IllegalKeyException {
+  private V get(TreeNode<K, V> current, K key) {
 
     // if the current element is null, the tree has ended, return false
     if (current == null) {

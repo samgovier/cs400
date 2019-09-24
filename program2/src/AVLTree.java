@@ -79,7 +79,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       if (this.left == null && this.right == null) {
         return 0;
       } else if (this.left == null) {
-        return right.getHeight();
+        return -(right.getHeight());
       } else if (this.right == null) {
         return left.getHeight();
       }
@@ -276,9 +276,17 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
 
     // if there is only one child, decrement size and bring child up
     if (current.left == null) {
+      if (current.right.getHeight() > 2) {
+        current.right = rebalance(current.right);
+      }
+
       return current.right;
     }
     if (current.right == null) {
+      if (current.left.getHeight() > 2) {
+        current.left = rebalance(current.left);
+      }
+
       return current.left;
     }
 
@@ -290,6 +298,10 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       // set the current node to the predecessor
       current = current.left;
 
+      if (current.getHeight() > 2) {
+        current = rebalance(current);
+      }
+      
       return current;
     }
 
@@ -303,6 +315,10 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
 
     // point the parent at any remaining data from the predecessor
     inOrderPredecessorParent.right = inOrderPredecessorParent.right.left;
+
+    if (current.getHeight() > 2) {
+      current = rebalance(current);
+    }
 
     return current;
   }

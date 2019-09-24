@@ -24,7 +24,6 @@
 
 // remember that you are not allowed to add any public methods or fields
 // but you can add any private methods or fields
-
 public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
 
   /**
@@ -36,7 +35,6 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   private class TreeNode<K, V> {
     private K key;
     private V value;
-    // TODO implement (?) private int height;
     private TreeNode<K, V> left, right;
 
     private TreeNode(K key, V value) {
@@ -44,7 +42,6 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       this.value = value;
       this.left = null;
       this.right = null;
-      // TODO implement (?) this.height = 1;
     }
 
     /**
@@ -106,8 +103,70 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * 
    * @return true if root is empty
    */
+  @Override
   public boolean isEmpty() {
     return null == root;
+  }
+
+
+  /**
+   * AVLTree rotate left.
+   * 
+   * @param root an imbalance node
+   * @return TreeNode<K, V> the node for which balance has been modified
+   */
+  private TreeNode<K, V> rotateLeft(TreeNode<K, V> root) {
+
+    TreeNode<K, V> temp = root.right.left;
+    root.right.left = root;
+    root = root.right;
+    root.left.right = temp;
+    return root;
+
+  }
+
+  /**
+   * AVLTree rotate right.
+   * 
+   * @param root an imbalance node
+   * @return the node for which balance has been modified
+   */
+  private TreeNode<K, V> rotateRight(TreeNode<K, V> root) {
+
+    TreeNode<K, V> temp = root.left.right;
+    root.left.right = root;
+    root = root.left;
+    root.right.left = temp;
+    return root;
+  }
+
+  /**
+   * 
+   * @param root
+   * @return
+   */
+  private TreeNode<K, V> rebalance(TreeNode<K, V> root) {
+    if (root.getBalance() >= 2) {
+      if (root.left.getBalance() == 1) {
+        root = rotateRight(root);
+      }
+      else if (root.left.getBalance() == -1) {
+        root.left = rotateLeft(root.left);
+        root = rotateRight(root);
+      }
+    }
+    else if (root.getBalance() <= -2) {
+      if (root.right.getBalance() == -1) {
+        root = rotateLeft(root);
+      }
+      else if (root.right.getBalance() == 1) {
+        root.right = rotateRight(root.right);
+        root = rotateLeft(root);
+      }
+    }
+
+    // the root is re-balanced: return
+    return root;
   }
 
   /**
@@ -118,6 +177,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @throws DuplicateKeyException if the key has already been inserted into the tree
    * @throws IllegalKeyException   if the key is null
    */
+  @Override
   public void insert(K key, V value) throws DuplicateKeyException, IllegalKeyException {
     if (null == key) {
       throw new IllegalKeyException("key is null");
@@ -154,11 +214,13 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       current.right = insert(current.right, key, value);
     }
 
+    if (current.getHeight() > 2) {
+      current = rebalance(current);
+    }
     return current;
 
 
   }
-
 
 
   /**
@@ -167,6 +229,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * @param key
    * @throws IllegalKeyException if attempt to delete null
    */
+  @Override
   public void delete(K key) throws IllegalKeyException {
     if (null == key) {
       throw new IllegalKeyException("key is null");
@@ -190,11 +253,17 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     // if the element is smaller than current, go left
     if (key.compareTo(current.key) < 0) {
       current.left = delete(current.left, key);
+      if (current.getHeight() > 2) {
+        current = rebalance(current);
+      }
       return current;
     }
     // if the element is greater than current, go right
     if (key.compareTo(current.key) > 0) {
       current.right = delete(current.right, key);
+      if (current.getHeight() > 2) {
+        current = rebalance(current);
+      }
       return current;
     }
 
@@ -254,34 +323,13 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   }
 
   /**
-   * AVLTree rotate left.
-   * 
-   * @param root an imbalance node
-   * @return TreeNode<K, V> the node for which balance has been modified
-   */
-  private TreeNode<K, V> rotateLeft(TreeNode<K, V> root) {
-    // TODO: implement
-    return null;
-  }
-
-  /**
-   * AVLTree rotate right.
-   * 
-   * @param root an imbalance node
-   * @return the node for which balance has been modified
-   */
-  private TreeNode<K, V> rotateRight(TreeNode<K, V> root) {
-    // TODO: implement
-    return root;
-  }
-
-  /**
    * Get a value in the tree given the key. If the value isn't in the tree, return null.
    * 
    * @param key
    * @return value the object associated with this key
    * @throws IllegalArgumentException if the key is null
    */
+  @Override
   public V get(K key) throws IllegalKeyException {
     if (null == key) {
       throw new IllegalKeyException("key is null");
@@ -315,6 +363,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * Returns the AVL tree in pre-order traversal. The string that is returned will have each node's
    * key separated by a whitespace. Example: "MKE ATL MSN LAX".
    */
+  @Override
   public String preOrderTraversal() {
     return preOrderTraversal(root);
   }
@@ -332,6 +381,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   /**
    * Print a tree sideways to show structure. This code is completed for you.
    */
+  @Override
   public void printSideways() {
     System.out.println("------------------------------------------");
     recursivePrintSideways(root, "");

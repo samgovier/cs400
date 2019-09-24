@@ -375,7 +375,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
 
     // otherwise
     return current.key.toString() + " " + preOrderTraversal(current.left)
-        + preOrderTraversal(current.left);
+        + preOrderTraversal(current.right);
   }
 
   /**

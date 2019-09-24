@@ -94,18 +94,18 @@ public class AVLTreeClass<K extends Comparable<K>, V> {
 
     // inserting to the left of current
 
-    current.left = insert(current.left, key, value);
-
-    // current.updateHeight();
-
-    if (current.getBalance() == 2) {
-      if (current.left.getBalance() == 1) {
-        current = rightRotate(current);
-      } else {
-        current.left = leftRotate(current.left);
-        current = rightRotate(current);
-      }
-    }
+//    current.left = insert(current.left, key, value);
+//
+//    // current.updateHeight();
+//
+//    if (current.getBalance() == 2) {
+//      if (current.left.getBalance() == 1) {
+//        current = rightRotate(current);
+//      } else {
+//        current.left = leftRotate(current.left);
+//        current = rightRotate(current);
+//      }
+//    }
 
   }
   

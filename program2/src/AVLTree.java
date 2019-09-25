@@ -22,21 +22,35 @@
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 
-// remember that you are not allowed to add any public methods or fields
-// but you can add any private methods or fields
+/**
+ * AVLTree class contains the object definition for an AVL Binary Search Tree. The tree is
+ * initialized empty, and each node must be inserted. PreOrderTraversal and PrintSidways return a
+ * string representation of the tree. Nodes can be removed and looked up.
+ *
+ * @param <K> is the key element type of the tree
+ * @param <V> is the value element type of the tree
+ */
 public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
 
   /**
-   * Inner class representing a node of the AVL tree.
+   * Inner class representing a node of the AVL tree. getHeight returns the height from this node as
+   * the root: getBalance returns the balance based on the two subtrees
    * 
    * @param <K> is the key data type
    * @param <V> is the value data type
    */
   private class TreeNode<K, V> {
+
+    // key is the key value of the node
     private K key;
+
+    // value is the contained value of the node
     private V value;
+
+    // left and right are the left and right children of the node
     private TreeNode<K, V> left, right;
 
+    // this constructor sets the key, value, and left and right to null
     private TreeNode(K key, V value) {
       this.key = key;
       this.value = value;
@@ -47,7 +61,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     /**
      * this recursive method which finds the height from this node as the root
      * 
-     * @return the height of the tree as an integer If the node has no children, return 1
+     * @return the height of the tree as an integer. If the node has no children, return 1
      */
     private int getHeight() {
       // if there are no children, return 1, as defined
@@ -76,14 +90,22 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
      * @return an integer representing the balance of this node
      */
     private int getBalance() {
+      // if there are no children, perfect balance, return 0
       if (this.left == null && this.right == null) {
         return 0;
-      } else if (this.left == null) {
+      }
+
+      // if left is null, return 0 - right height
+      else if (this.left == null) {
         return -(right.getHeight());
-      } else if (this.right == null) {
+      }
+
+      // if right is null, return left height - 0
+      else if (this.right == null) {
         return left.getHeight();
       }
 
+      // if we're here, both exist, so return left - right
       return left.getHeight() - right.getHeight();
     }
   }
@@ -113,14 +135,23 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    * AVLTree rotate left.
    * 
    * @param root an imbalance node
-   * @return TreeNode<K, V> the node for which balance has been modified
+   * @return the node for which balance has been modified
    */
   private TreeNode<K, V> rotateLeft(TreeNode<K, V> root) {
 
+    // if we have a value, store it temporarily. If there is nothing this will simply be null
     TreeNode<K, V> temp = root.right.left;
+
+    // move the root to the left child of the right child
     root.right.left = root;
+
+    // set the new root as the right child
     root = root.right;
+
+    // if there is any data, store it in the now empty root.left.right
     root.left.right = temp;
+
+    // return the modified root
     return root;
 
   }
@@ -133,32 +164,54 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
    */
   private TreeNode<K, V> rotateRight(TreeNode<K, V> root) {
 
+    // if we have a value, store it temporarily. If there is nothing this will simply be null
     TreeNode<K, V> temp = root.left.right;
+
+    // move the root to the right child of the left child
     root.left.right = root;
+
+    // set the new root as the right child
     root = root.left;
+
+    // if there is any data, store it in the now empty root.right.left
     root.right.left = temp;
+
+    // return the modified root
     return root;
   }
 
   /**
+   * based on the balance factors, rebalance the subtree of the passed root
    * 
-   * @param root
-   * @return
+   * @param root is the root of the subtree to be rebalanced
+   * @return the rebalanced root
    */
   private TreeNode<K, V> rebalance(TreeNode<K, V> root) {
+
+    // if the root is left-child heavy, balance
     if (root.getBalance() >= 2) {
+
+      // if the mis-balance runs all the way left, simply rotate right
       if (root.left.getBalance() == 1) {
         root = rotateRight(root);
       }
+
+      // if the mis-balance goes back right, rotate the left child then rotate right
       else if (root.left.getBalance() == -1) {
         root.left = rotateLeft(root.left);
         root = rotateRight(root);
       }
     }
+
+    // else if the root is right-child heavy, balance
     else if (root.getBalance() <= -2) {
+
+      // if the mis-balance runs all the way right, simply rotate left
       if (root.right.getBalance() == -1) {
         root = rotateLeft(root);
       }
+
+      // if the mis-balance goes back left, rotate the right child then rotate left
       else if (root.right.getBalance() == 1) {
         root.right = rotateRight(root.right);
         root = rotateLeft(root);
@@ -170,29 +223,33 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   }
 
   /**
-   * Adds a key, value pair to the tree.
+   * calls a private recursive helper method and stores the result of that method as the new root
    * 
-   * @param key
-   * @param value
+   * @param key   is the lookup key to be inserted
+   * @param value is the element to be inserted
    * @throws DuplicateKeyException if the key has already been inserted into the tree
    * @throws IllegalKeyException   if the key is null
    */
   @Override
   public void insert(K key, V value) throws DuplicateKeyException, IllegalKeyException {
+
+    // if the key is null, throw illegal key exception
     if (null == key) {
       throw new IllegalKeyException("key is null");
     }
 
+    // else start recursion
     root = insert(root, key, value);
   }
 
   /**
+   * Private recursive helper method adds a node maintaining BST and AVL rules
    * 
-   * @param current
-   * @param key
-   * @param value
-   * @return
-   * @throws DuplicateKeyException
+   * @param current the root of this subtree
+   * @param key     the lookup key to be added
+   * @param value   the element to be added
+   * @return the updated reference to current
+   * @throws DuplicateKeyException if the key has already been inserted into the tree
    */
   private TreeNode<K, V> insert(TreeNode<K, V> current, K key, V value)
       throws DuplicateKeyException {
@@ -201,8 +258,9 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       current = new TreeNode<K, V>(key, value);
     }
 
+    // if the keys match, throw DuplicateKeyException
     else if (key.compareTo(current.key) == 0) {
-      throw new DuplicateKeyException("The key has already been inserted into the tree");
+      throw new DuplicateKeyException("key has already been inserted into the tree");
     }
     // if the element is smaller than current, go left
     else if (key.compareTo(current.key) < 0) {
@@ -214,9 +272,12 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       current.right = insert(current.right, key, value);
     }
 
+    // before returning: if the height is greater than 2, make sure the tree is balanced
     if (current.getHeight() > 2) {
       current = rebalance(current);
     }
+
+    // return the current node when it's set
     return current;
 
 
@@ -224,13 +285,16 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
 
 
   /**
-   * Removes a key from the AVL tree. Returns nothing if the key is not found.
+   * Calls a private recursive method to remove a key from the AVL tree. Returns nothing if the key
+   * is not found.
    * 
-   * @param key
+   * @param key the key value to be removed
    * @throws IllegalKeyException if attempt to delete null
    */
   @Override
   public void delete(K key) throws IllegalKeyException {
+
+    // if the key is null, throw illegal key exception
     if (null == key) {
       throw new IllegalKeyException("key is null");
     }
@@ -239,10 +303,11 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   }
 
   /**
+   * private recursive helper method removes a node, maintaining BST and AVL rules
    * 
-   * @param current
-   * @param key
-   * @return
+   * @param current the root of this subtree
+   * @param key     the key value to be removed. If the element doesn't exist, return nothing
+   * @return the updated reference to current
    */
   private TreeNode<K, V> delete(TreeNode<K, V> current, K key) {
 
@@ -253,6 +318,8 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     // if the element is smaller than current, go left
     if (key.compareTo(current.key) < 0) {
       current.left = delete(current.left, key);
+
+      // before returning: if the height is greater than 2, make sure the tree is balanced
       if (current.getHeight() > 2) {
         current = rebalance(current);
       }
@@ -261,6 +328,8 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     // if the element is greater than current, go right
     if (key.compareTo(current.key) > 0) {
       current.right = delete(current.right, key);
+
+      // before returning: if the height is greater than 2, make sure the tree is balanced
       if (current.getHeight() > 2) {
         current = rebalance(current);
       }
@@ -269,13 +338,15 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
 
     // if we're here, we've found the right element. Begin removal
 
-    // if there are no children, set this node to null
+    // if there are no children, set this node to null. No need to balance since height is 0
     if (current.left == null && current.right == null) {
       return null;
     }
 
     // if there is only one child, decrement size and bring child up
     if (current.left == null) {
+
+      // before returning: if the height is greater than 2, make sure the tree is balanced
       if (current.right.getHeight() > 2) {
         current.right = rebalance(current.right);
       }
@@ -283,6 +354,8 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       return current.right;
     }
     if (current.right == null) {
+
+      // before returning: if the height is greater than 2, make sure the tree is balanced
       if (current.left.getHeight() > 2) {
         current.left = rebalance(current.left);
       }
@@ -298,10 +371,11 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
       // set the current node to the predecessor
       current = current.left;
 
+      // before returning: if the height is greater than 2, make sure the tree is balanced
       if (current.getHeight() > 2) {
         current = rebalance(current);
       }
-      
+
       return current;
     }
 
@@ -316,6 +390,7 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     // point the parent at any remaining data from the predecessor
     inOrderPredecessorParent.right = inOrderPredecessorParent.right.left;
 
+    // before returning: if the height is greater than 2, make sure the tree is balanced
     if (current.getHeight() > 2) {
       current = rebalance(current);
     }
@@ -324,9 +399,12 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   }
 
   /**
+   * second private recursive helper method to find the parent of the removing root's predecessor,
+   * when it's not the immediate left node
    * 
-   * @param current
-   * @return
+   * @param current the root of this subtree
+   * 
+   * @return the parent of the predecessor
    */
   private TreeNode<K, V> findInOrderPredecessorParent(TreeNode<K, V> current) {
     // if the right child of the right child isn't null, this right child isn't the predecessor
@@ -339,14 +417,16 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   }
 
   /**
-   * Get a value in the tree given the key. If the value isn't in the tree, return null.
+   * Calls a private recursive method to search the tree for that element
    * 
-   * @param key
+   * @param key the key value to be got
    * @return value the object associated with this key
    * @throws IllegalArgumentException if the key is null
    */
   @Override
   public V get(K key) throws IllegalKeyException {
+
+    // if the key is null, throw illegal key exception
     if (null == key) {
       throw new IllegalKeyException("key is null");
     }
@@ -354,9 +434,16 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
     return get(root, key);
   }
 
+  /**
+   * Get a value in the tree given the key. If the value isn't in the tree, return null
+   * 
+   * @param current the root of this subtree
+   * @param key     the key value to be got
+   * @return value the object associated with this key
+   */
   private V get(TreeNode<K, V> current, K key) {
 
-    // if the current element is null, the tree has ended, return false
+    // if the current element is null, the tree has ended, return null
     if (current == null) {
       return null;
     }
@@ -378,18 +465,27 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   /**
    * Returns the AVL tree in pre-order traversal. The string that is returned will have each node's
    * key separated by a whitespace. Example: "MKE ATL MSN LAX".
+   * 
+   * @return a string representing preOrder traversal
    */
   @Override
   public String preOrderTraversal() {
     return preOrderTraversal(root);
   }
 
+  /**
+   * recursive method for preOrder traversal
+   * 
+   * @param current the root of the current subtree
+   * @return a string representing preOrder traversal
+   */
   private String preOrderTraversal(TreeNode<K, V> current) {
+    // if the current node is null, return an empty string
     if (current == null) {
       return "";
     }
 
-    // otherwise
+    // otherwise, return this data along with the data of the children
     return current.key.toString() + " " + preOrderTraversal(current.left)
         + preOrderTraversal(current.right);
   }

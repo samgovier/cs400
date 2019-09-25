@@ -25,11 +25,12 @@
 /**
  * Checked exception thrown if the key being inserted already exists in the structure.
  */
-@SuppressWarnings("serial") 
-class DuplicateKeyException extends Exception { 
-  
+@SuppressWarnings("serial")
+class DuplicateKeyException extends Exception {
+
   /**
    * Constructor for a DuplicateKeyException with an input message
+   * 
    * @param message is the error message
    */
   public DuplicateKeyException(String message) {

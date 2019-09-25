@@ -9,19 +9,20 @@ public class Program {
     System.out.println(treetest.isEmpty());
 
     try {
-      treetest.insert(20, "TWO");
-      treetest.insert(10, "TEN");
-      treetest.insert(30, "ONE");
+      treetest.insert(5, "TWO");
+      treetest.insert(9, "TEN");
+      treetest.insert(6, "ONE");
       
-      treetest.insert(40, "HELLO:");
+      treetest.insert(4, "HELLO:");
       
-//      treetest.insert(5, "HUH");
-//      treetest.insert(15, "THREE");
-//      treetest.insert(13, "PSYCH");
-//      treetest.insert(18, "hey");
+      treetest.insert(8, "HUH");
+      treetest.insert(3, "THREE");
+      treetest.insert(2, "PSYCH");
+      treetest.insert(7, "hey");
+      treetest.insert(1, "one more");
       treetest.delete(20);
-      System.out.println(treetest.get(25));
-      System.out.println(treetest.get(99));
+      System.out.println(treetest.get(5));
+      System.out.println(treetest.get(2));
       System.out.println(treetest.isEmpty());
       System.out.println(treetest.preOrderTraversal());
       treetest.printSideways();

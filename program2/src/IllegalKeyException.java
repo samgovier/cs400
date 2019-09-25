@@ -30,6 +30,7 @@ class IllegalKeyException extends Exception {
 
   /**
    * Constructor for an IllegalKeyException with an input message
+   * 
    * @param message is the error message
    */
   public IllegalKeyException(String message) {

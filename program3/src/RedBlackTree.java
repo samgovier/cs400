@@ -80,7 +80,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
 
   // root is the top node of the tree
   private RBNode<K, V> root;
-  
+
   // size is the amount of nodes
   private int size;
 
@@ -93,69 +93,114 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
     root = null;
     size = 0;
   }
-  
-  private RBNode<K, V> rebalanceRight(RBNode<K, V> current) {
-
-    if (!current.right.isRed) {
-      return current;
-    }
-
-    // case 2
-    if ((current.left == null) || (!current.left.isRed)) {
-      if ((current.right.right != null) && (current.right.right.isRed)) {
-        current.right.isRed = false;
-        current.isRed = true;
-        current = leftRotate(current);
-      }
-      return current;
-    }
-
-    // case 1a
-    if ((current.left != null) && current.left.isRed) {
-      if (current.right.right != null && current.right.right.isRed) {
-        current.right.isRed = false;
-        current.left.isRed = false;
-        current.isRed = true;
-      }
-      return current;
-    }
-
-    return current;
-  }
-
-  private RBNode<K, V> rebalanceLeft(RBNode<K, V> current) {
-    // TODO Auto-generated method stub
-    return current;
-  }
 
   // makes this nodes right child into its parent
   private RBNode<K, V> leftRotate(RBNode<K, V> current) {
 
-    RBNode<K, V> temp = current.right;
-    current.right = temp.left;
-    temp.left = current;
-    return current;
+    // if we have a value, store it temporarily. If there is nothing this will simply be null
+    RBNode<K, V> temp = root.right.left;
+
+    // move the root to the left child of the right child
+    root.right.left = root;
+
+    // set the new root as the right child
+    root = root.right;
+
+    // if there is any data, store it in the now empty root.left.right
+    root.left.right = temp;
+
+    // return the modified root
+    return root;
   }
 
   // makes this nodes left child into its parent
   private RBNode<K, V> rightRotate(RBNode<K, V> current) {
+
+    // if we have a value, store it temporarily. If there is nothing this will simply be null
+    RBNode<K, V> temp = root.left.right;
+
+    // move the root to the right child of the left child
+    root.left.right = root;
+
+    // set the new root as the right child
+    root = root.left;
+
+    // if there is any data, store it in the now empty root.right.left
+    root.right.left = temp;
+
+    // return the modified root
+    return root;
+  }
+
+  private RBNode<K, V> rebalanceRight(RBNode<K, V> current) {
+
+    // RBNode<K,V> C = current.right.???;
+    RBNode<K,V> P = current.right;
+    RBNode<K,V> S = current.left; // could be null
+    RBNode<K,V> G = current;
+    if (current.getHeight() > 2) {
+     
+      if (!current.right.isRed) {
+        return current;
+      }
+
+      // case 2
+      if ((current.left == null) || (!current.left.isRed)) {
+        if ((current.right.right != null) && (current.right.right.isRed)) {
+          current.right.isRed = false;
+          current.isRed = true;
+          current = leftRotate(current);
+        }
+        return current;
+      }
+
+      // case 1a
+      if ((current.left != null) && current.left.isRed) {
+        if (current.right.right != null && current.right.right.isRed) {
+          current.right.isRed = false;
+          current.left.isRed = false;
+          current.isRed = true;
+        }
+        return current;
+      }
+
+      // case 1b
+      
+      // case 3
+
+    }
     
-    RBNode<K, V> temp = current.left;
-    current.left = temp.right;
-    temp.right = current;
+    
+    
     return current;
   }
 
-  
+  private RBNode<K, V> rebalanceLeft(RBNode<K, V> current) {
+    if (current.getHeight() > 2) {
+
+    }
+
+    return current;
+  }
+
   @Override
-  public void insert(K key, V value) {
+  public void insert(K key, V value) throws IllegalKeyException {
+
+    // if the key is null, throw illegal key exception
+    if (null == key) {
+      throw new IllegalKeyException();
+    }
+
+    // else start recursion
     root = insert(root, key, value);
+
+    // reset root if it's shifted to red
     root.isRed = false;
   }
 
   private RBNode<K, V> insert(RBNode<K, V> current, K key, V value) {
     if (current == null) { // base case
-      current = new RBNode(key, value); // isRed = true
+      current = new RBNode<K, V>(key, value); // isRed = true
     } else if (key.compareTo(current.key) < 0) { // key is less, go left
       current.left = insert(current.left, key, value);
       current = rebalanceLeft(current);
@@ -163,11 +208,13 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
       current.right = insert(current.right, key, value);
       current = rebalanceRight(current);
     } else {
-      // equals ..depends on your implementation
+      current.value = value;
     }
-    return current; // make the change back up the recursive call
+
+    // return the current node when it's set
+    return current;
   }
-  
+
   @Override
   public V getValue(K key) throws IllegalKeyException {
 

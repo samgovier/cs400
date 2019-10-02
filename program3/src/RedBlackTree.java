@@ -134,29 +134,29 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
 
   private RBNode<K, V> rebalanceRight(RBNode<K, V> current) {
 
-    // RBNode<K,V> C = current.right.???;
-    RBNode<K,V> P = current.right;
-    RBNode<K,V> S = current.left; // could be null
-    RBNode<K,V> G = current;
     if (current.getHeight() > 2) {
-     
+
       if (!current.right.isRed) {
         return current;
       }
 
-      // case 2
       if ((current.left == null) || (!current.left.isRed)) {
         if ((current.right.right != null) && (current.right.right.isRed)) {
           current.right.isRed = false;
           current.isRed = true;
           current = leftRotate(current);
+        } else if ((current.right.left != null) && (current.right.left.isRed)) {
+          current.right.left.isRed = false;
+          current.isRed = true;
+          current = rightRotate(current.right);
+          current = leftRotate(current);
         }
         return current;
       }
 
-      // case 1a
-      if ((current.left != null) && current.left.isRed) {
-        if (current.right.right != null && current.right.right.isRed) {
+      if ((current.left != null) && (current.left.isRed)) {
+        if ((current.right.right != null && current.right.right.isRed)
+            || (current.right.left != null && current.right.left.isRed)) {
           current.right.isRed = false;
           current.left.isRed = false;
           current.isRed = true;
@@ -164,19 +164,42 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
         return current;
       }
 
-      // case 1b
-      
-      // case 3
-
     }
-    
-    
-    
+
     return current;
   }
 
   private RBNode<K, V> rebalanceLeft(RBNode<K, V> current) {
+    
     if (current.getHeight() > 2) {
+
+      if (!current.left.isRed) {
+        return current;
+      }
+
+      if ((current.right == null) || (!current.right.isRed)) {
+        if ((current.left.left != null) && (current.left.left.isRed)) {
+          current.left.isRed = false;
+          current.isRed = true;
+          current = rightRotate(current);
+        } else if ((current.left.right != null) && (current.left.right.isRed)) {
+          current.left.right.isRed = false;
+          current.isRed = true;
+          current = leftRotate(current.left);
+          current = rightRotate(current);
+        }
+        return current;
+      }
+
+      if ((current.right != null) && (current.right.isRed)) {
+        if ((current.left.left != null && current.left.left.isRed)
+            || (current.left.right != null && current.left.right.isRed)) {
+          current.left.isRed = false;
+          current.right.isRed = false;
+          current.isRed = true;
+        }
+        return current;
+      }
 
     }
 

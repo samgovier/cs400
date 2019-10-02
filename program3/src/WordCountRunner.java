@@ -71,6 +71,8 @@ public class WordCountRunner {
       System.out.println("File not found.");
       return;
     }
+    
+    // TODO REMOVE
     tree.printSideways();
     // after all words are read in, print out this message
     System.out.println(

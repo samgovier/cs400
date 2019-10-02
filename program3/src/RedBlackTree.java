@@ -98,38 +98,38 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
   private RBNode<K, V> leftRotate(RBNode<K, V> current) {
 
     // if we have a value, store it temporarily. If there is nothing this will simply be null
-    RBNode<K, V> temp = root.right.left;
+    RBNode<K, V> temp = current.right.left;
 
-    // move the root to the left child of the right child
-    root.right.left = root;
+    // move current to the left child of the right child
+    current.right.left = current;
 
-    // set the new root as the right child
-    root = root.right;
+    // set the new current as the right child
+    current = current.right;
 
-    // if there is any data, store it in the now empty root.left.right
-    root.left.right = temp;
+    // if there is any data, store it in the now empty current.left.right
+    current.left.right = temp;
 
-    // return the modified root
-    return root;
+    // return the modified current
+    return current;
   }
 
   // makes this nodes left child into its parent
   private RBNode<K, V> rightRotate(RBNode<K, V> current) {
 
     // if we have a value, store it temporarily. If there is nothing this will simply be null
-    RBNode<K, V> temp = root.left.right;
+    RBNode<K, V> temp = current.left.right;
 
-    // move the root to the right child of the left child
-    root.left.right = root;
+    // move current to the right child of the left child
+    current.left.right = current;
 
-    // set the new root as the right child
-    root = root.left;
+    // set the new current as the right child
+    current = current.left;
 
-    // if there is any data, store it in the now empty root.right.left
-    root.right.left = temp;
+    // if there is any data, store it in the now empty current.right.left
+    current.right.left = temp;
 
-    // return the modified root
-    return root;
+    // return the modified current
+    return current;
   }
 
   private RBNode<K, V> rebalanceRight(RBNode<K, V> current) {
@@ -148,7 +148,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
         } else if ((current.right.left != null) && (current.right.left.isRed)) {
           current.right.left.isRed = false;
           current.isRed = true;
-          current = rightRotate(current.right);
+          current.right = rightRotate(current.right);
           current = leftRotate(current);
         }
         return current;
@@ -185,7 +185,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
         } else if ((current.left.right != null) && (current.left.right.isRed)) {
           current.left.right.isRed = false;
           current.isRed = true;
-          current = leftRotate(current.left);
+          current.left = leftRotate(current.left);
           current = rightRotate(current);
         }
         return current;
@@ -224,6 +224,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
   private RBNode<K, V> insert(RBNode<K, V> current, K key, V value) {
     if (current == null) { // base case
       current = new RBNode<K, V>(key, value); // isRed = true
+      size++;
     } else if (key.compareTo(current.key) < 0) { // key is less, go left
       current.left = insert(current.left, key, value);
       current = rebalanceLeft(current);

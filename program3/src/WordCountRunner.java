@@ -42,8 +42,8 @@ public class WordCountRunner {
 
         // clean a line with regex
         // .replaceAll("[^a-zA-Z ]", "") removes all non-alphabetic characters (replaces them with
-        // the
-        // empty string) and .split("\\s+") separates out the words using whitespace as a delimiter
+        // the empty string) and .split("\\s+") separates out the words using whitespace as a
+        // delimiter
         String[] words = line.trim().replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
 
         for (String word : words) {
@@ -53,7 +53,7 @@ public class WordCountRunner {
               if (value == null) {
                 tree.insert(word, 1);
               } else {
-                tree.insert(word, value++);
+                tree.insert(word, ++value);
               }
 
             } catch (IllegalKeyException e1) {
@@ -71,32 +71,31 @@ public class WordCountRunner {
       System.out.println("File not found.");
       return;
     }
-    
+
     // TODO REMOVE
     tree.printSideways();
     // after all words are read in, print out this message
     System.out.println(
         "The tree has a size of " + tree.getSize() + " and a height of " + tree.getHeight());
-    
+
     Scanner input = new Scanner(System.in);
     String request = "";
     // while the input doesn't match 'qqq', continue word lookup
     do {
       System.out.print("Enter a word to search for in \"" + INPUT_FILE + "\": ");
       request = input.next().replaceAll("[^a-zA-Z ]", "").toLowerCase();
-      
+
       if (request == "qqq") {
         System.out.println("Exiting.");
-      }
-      else {
+      } else {
         try {
           Integer wordTimes = tree.getValue(request);
-          
+
           if (null == wordTimes) {
             System.out.println("\"" + request + "\" was not found in the given file.");
-          }
-          else {
-            System.out.println("\"" + request + "\" was found in the file " + wordTimes + " times.");
+          } else {
+            System.out
+                .println("\"" + request + "\" was found in the file " + wordTimes + " times.");
           }
         } catch (IllegalKeyException e1) {
           System.out.println("Request was null.");

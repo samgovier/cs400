@@ -321,7 +321,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
    */
   @Override
   public String preOrderTraversal() {
-    return preOrderTraversal(root);
+    return preOrderTraversal(root).trim();
   }
 
   /**
@@ -353,7 +353,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
   }
 
   // private recursive helper method for printSideways above
-  private void printSideways(RBNode current, String indent) {
+  private void printSideways(RBNode<K, V> current, String indent) {
     if (current != null) {
       printSideways(current.right, indent + "    ");
       if (current.isRed) {

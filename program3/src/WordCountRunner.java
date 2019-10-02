@@ -72,7 +72,6 @@ public class WordCountRunner {
       return;
     }
 
-    // TODO REMOVE
     tree.printSideways();
     // after all words are read in, print out this message
     System.out.println(
@@ -85,7 +84,7 @@ public class WordCountRunner {
       System.out.print("Enter a word to search for in \"" + INPUT_FILE + "\": ");
       request = input.next().replaceAll("[^a-zA-Z ]", "").toLowerCase();
 
-      if (request == "qqq") {
+      if (request.equalsIgnoreCase("qqq")) {
         System.out.println("Exiting.");
       } else {
         try {
@@ -101,7 +100,7 @@ public class WordCountRunner {
           System.out.println("Request was null.");
         }
       }
-    } while (request != "qqq");
+    } while (!request.equalsIgnoreCase("qqq"));
 
     // close the scanner to prevent memory leaks
     input.close();

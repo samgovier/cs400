@@ -307,8 +307,8 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
    * Private recursive helper method adds a node maintaining BST and Red Black rules
    * 
    * @param current the root of this subtree
-   * @param key the lookup key to be added
-   * @param value the element to be added
+   * @param key     the lookup key to be added
+   * @param value   the element to be added
    * @return the updated reference to current
    */
   private RBNode<K, V> insert(RBNode<K, V> current, K key, V value) {
@@ -317,23 +317,23 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
       current = new RBNode<K, V>(key, value);
       size++;
     }
-    
+
     // if the element is smaller than current, go left
     else if (key.compareTo(current.key) < 0) {
       current.left = insert(current.left, key, value);
-      
+
       // before returning, rebalance left
       current = rebalanceLeft(current);
     }
-    
+
     // if the element is greater than current, go right
     else if (key.compareTo(current.key) > 0) {
       current.right = insert(current.right, key, value);
-      
+
       // before returning, rebalance right
       current = rebalanceRight(current);
     }
-    
+
     // if we're here, the keys match: just update the value
     else {
       current.value = value;
@@ -426,7 +426,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
 
   /**
    * Returns the Red Black tree in pre-order traversal. The string that is returned will have each
-   * node's key separated by a whitespace.
+   * node's key separated by a space.
    * 
    * @return a string representing preOrder traversal
    */

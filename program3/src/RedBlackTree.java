@@ -22,28 +22,40 @@
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 
 /**
- * 
- * @author Sam
+ * RedBlackTree class contains the object definition for a Red Black Binary Search Tree. The tree is
+ * initialized empty, and each node must be inserted. PreOrderTraversal and PrintSideways return a
+ * string representation of the tree. Nodes can also be looked up. GetSize and GetHeight get
+ * statistics about the tree.
  *
- * @param <K>
- * @param <V>
+ * @param <K> is the key element type of the tree
+ * @param <V> is the value element type of the tree
  */
 public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K, V> {
-  // Note: your RedBlackTree implementation must be consistent with the class notes and
-  // specifications.
-  // When in doubt, check your results with
-  // https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
 
-  // private inner class that stores Key, Value pairs
+  /**
+   * Inner class representing a node of the RedBlack tree. getHeight returns the height from this
+   * node as the root.
+   *
+   * @param <K> is the key data type
+   * @param <V> is the value data type
+   */
   private class RBNode<K extends Comparable<K>, V> {
+
+    // key is the key value of the node
     private K key;
+
+    // value is the contained value of the node
     private V value;
-    private RBNode<K, V> left; // left child
-    private RBNode<K, V> right; // right child
-    private boolean isRed; // red/black property
 
+    // left and right children of the node
+    private RBNode<K, V> left;
+    private RBNode<K, V> right;
 
-    public RBNode(K key, V value) {
+    // isRed marks whether the node is red or black
+    private boolean isRed;
+
+    // this constructor sets key and value, left and right to null, and the color to red by default
+    private RBNode(K key, V value) {
       this.key = key;
       this.value = value;
       this.left = null;
@@ -132,80 +144,150 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
     return current;
   }
 
+  /**
+   * based on RedBlack tree rules, re-balance the right side of the passed root
+   * 
+   * @param current is the root of the subtree to be rebalanced
+   * @return the rebalanced root
+   */
   private RBNode<K, V> rebalanceRight(RBNode<K, V> current) {
 
+    // if the height of this node is greater than 2 nodes, check rules, otherwise skip and return
     if (current.getHeight() > 2) {
 
+      // if the right node is black, we can skip and return
       if (!current.right.isRed) {
         return current;
       }
 
+      // if we're here, there may be a red-red violation, check
+
+      // if the sibling is null or black, continue
       if ((current.left == null) || (!current.left.isRed)) {
+
+        // if the new child is the right-right one and it's red, continue
         if ((current.right.right != null) && (current.right.right.isRed)) {
+
+          // set the median to black, and the current to red
           current.right.isRed = false;
           current.isRed = true;
+
+          // rotate so the black node is at the top
           current = leftRotate(current);
-        } else if ((current.right.left != null) && (current.right.left.isRed)) {
+        }
+
+        // if the new child is the right-left one and it's red, continue
+        else if ((current.right.left != null) && (current.right.left.isRed)) {
+
+          // set the median to black, and the current to red
           current.right.left.isRed = false;
           current.isRed = true;
+
+          // rotate so the black node is at the top
           current.right = rightRotate(current.right);
           current = leftRotate(current);
         }
+
+        // return the modified node
         return current;
       }
 
+      // if the sibling is red, continue
       if ((current.left != null) && (current.left.isRed)) {
+
+        // if we have red-red violation on either child, fix the coloring
         if ((current.right.right != null && current.right.right.isRed)
             || (current.right.left != null && current.right.left.isRed)) {
           current.right.isRed = false;
           current.left.isRed = false;
           current.isRed = true;
         }
+
+        // return the modified node
         return current;
       }
 
     }
 
+    // return the un-modified node
     return current;
   }
 
+  /**
+   * based on RedBlack tree rules, re-balance the left side of the passed root
+   * 
+   * @param current is the root of the subtree to be rebalanced
+   * @return the rebalanced root
+   */
   private RBNode<K, V> rebalanceLeft(RBNode<K, V> current) {
-    
+
+    // if the height of this node is greater than 2 nodes, check rules, otherwise skip and return
     if (current.getHeight() > 2) {
 
+      // if the left node is black, we can skip and return
       if (!current.left.isRed) {
         return current;
       }
 
+      // if we're here, there may be red-red violation, check
+
+      // if the sibling is null or black, continue
       if ((current.right == null) || (!current.right.isRed)) {
+
+        // if the new child is the left-left one and it's red, continue
         if ((current.left.left != null) && (current.left.left.isRed)) {
+
+          // set the median to black, and the current to red
           current.left.isRed = false;
           current.isRed = true;
+
+          // rotate so the black node is at the top
           current = rightRotate(current);
-        } else if ((current.left.right != null) && (current.left.right.isRed)) {
+        }
+
+        // if the new child is the left-right one and it's red, continue
+        else if ((current.left.right != null) && (current.left.right.isRed)) {
+
+          // set the median to black, and the current to red
           current.left.right.isRed = false;
           current.isRed = true;
+
+          // rotate so the black node is at the top
           current.left = leftRotate(current.left);
           current = rightRotate(current);
         }
+
+        // return the modified node
         return current;
       }
 
+      // if the sibling is red, continue
       if ((current.right != null) && (current.right.isRed)) {
+
+        // if we have red-red violation on either child, fix the coloring
         if ((current.left.left != null && current.left.left.isRed)
             || (current.left.right != null && current.left.right.isRed)) {
           current.left.isRed = false;
           current.right.isRed = false;
           current.isRed = true;
         }
+
+        // return the modified node
         return current;
       }
-
     }
 
+    // return the un-modified node
     return current;
   }
 
+  /**
+   * calls a private recursive helper method and stores the result of that method as the new root
+   * 
+   * @param key   is the lookup key to be inserted
+   * @param value is the element to be inserted
+   * @throws IllegalKeyException if the key is null
+   */
   @Override
   public void insert(K key, V value) throws IllegalKeyException {
 
@@ -221,17 +303,39 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
     root.isRed = false;
   }
 
+  /**
+   * Private recursive helper method adds a node maintaining BST and Red Black rules
+   * 
+   * @param current the root of this subtree
+   * @param key the lookup key to be added
+   * @param value the element to be added
+   * @return the updated reference to current
+   */
   private RBNode<K, V> insert(RBNode<K, V> current, K key, V value) {
-    if (current == null) { // base case
-      current = new RBNode<K, V>(key, value); // isRed = true
+    if (current == null) {
+      // set the current null location to the inserted element, and increase size
+      current = new RBNode<K, V>(key, value);
       size++;
-    } else if (key.compareTo(current.key) < 0) { // key is less, go left
+    }
+    
+    // if the element is smaller than current, go left
+    else if (key.compareTo(current.key) < 0) {
       current.left = insert(current.left, key, value);
+      
+      // before returning, rebalance left
       current = rebalanceLeft(current);
-    } else if (key.compareTo(current.key) > 0) { // key is more, go right
+    }
+    
+    // if the element is greater than current, go right
+    else if (key.compareTo(current.key) > 0) {
       current.right = insert(current.right, key, value);
+      
+      // before returning, rebalance right
       current = rebalanceRight(current);
-    } else {
+    }
+    
+    // if we're here, the keys match: just update the value
+    else {
       current.value = value;
     }
 
@@ -239,6 +343,13 @@ public class RedBlackTree<K extends Comparable<K>, V> implements SearchTreeADT<K
     return current;
   }
 
+  /**
+   * Calls a private recursive method to search the tree for an element
+   * 
+   * @param key the key value to be got
+   * @return value the object associated with this key
+   * @throws IllegalKeyException if the key is null
+   */
   @Override
   public V getValue(K key) throws IllegalKeyException {
 

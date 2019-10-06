@@ -21,8 +21,12 @@
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 import java.util.ArrayList;
-// no other import statements allowed
 
+/**
+ * 
+ * 
+ *
+ */
 public class TrieTree implements PrefixTreeADT {
 
   // provide the inner class header and instance variables to students
@@ -55,8 +59,9 @@ public class TrieTree implements PrefixTreeADT {
   }
 
   /**
-   * Inserts a string into the trie and increases the count of the word.
-   * New nodes must be inserted in alphabetical order.
+   * Inserts a string into the trie and increases the count of the word. New nodes must be inserted
+   * in alphabetical order.
+   * 
    * @param word can be upper or lower case, but must be stored as lower case
    * @throws IllegalArgumentException if input string is null or length is 0
    */
@@ -86,7 +91,10 @@ public class TrieTree implements PrefixTreeADT {
     }
 
     if (word.length() == 1) {
-      node.isEndOfWord = true;
+      if (node.isEndOfWord == false) {
+        node.isEndOfWord = true;
+        size++;
+      }
       node.endWordCount++;
     } else {
       insert(node, word.substring(1));
@@ -95,42 +103,111 @@ public class TrieTree implements PrefixTreeADT {
 
 
   /**
-   * Gets the size ....An empty trie returns 0.
-   * @return size (number of unique words) in the trie.
+   * this method returns the size of the tree
+   * 
+   * @return the number of unique words stored in the tree
    */
   @Override
   public int getSize() {
-    // TODO Auto-generated method stub
-    return 0;
+    return size;
   }
+
 
   /**
    * Returns the number of times the word appears in the trie.
+   * 
    * @param word can be upper or lower case, but is stored as lower case
    * @return the number of occurrences of word (returns 0 if word not present)
    * @throws IllegalArgumentException if input string is null or length is 0
    */
   @Override
   public int getFrequency(String word) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
-    return 0;
+
+    if (word == null || word.length() == 0) {
+      throw new IllegalArgumentException();
+    }
+
+    return getFrequency(root, word);
+  }
+
+  private int getFrequency(TNode current, String word) {
+
+    // TODO this is the idea... tighten the logic
+    char firstLetter = word.charAt(0);
+    TNode node = null;
+
+    for (TNode child : current.childList) {
+      if (child.letter == firstLetter) {
+        node = child;
+        break;
+      }
+    }
+
+    if (null == node) {
+      return 0;
+    }
+
+    if (word.length() == 1) {
+      return node.endWordCount;
+    } else {
+      return getFrequency(node, word.substring(1));
+    }
   }
 
   /**
-   * Returns an ArrayList<String> of all words in the trie that have the given prefix.
-   * If no words match the prefix, return an empty ArrayList<String>.
-   * If an empty string is input, returns all words
-   * Must have Order(tree height) efficiency. In other words, you must traverse your trie :)
-   * NOTE: if your trie is made correctly, your traversal will produce a sorted list
-   *       so you should not need to perform a sorting algorithm on this list
+   * Returns an ArrayList<String> of all words in the trie that have the given prefix. If no words
+   * match the prefix, return an empty ArrayList<String>. If an empty string is input, returns all
+   * words Must have Order(tree height) efficiency. In other words, you must traverse your trie :)
+   * NOTE: if your trie is made correctly, your traversal will produce a sorted list so you should
+   * not need to perform a sorting algorithm on this list
+   * 
    * @param prefix (if an empty string is entered, returns all words)
-   * @return an ArrayList<String> 
+   * @return an ArrayList<String>
    * @throws IllegalArgumentException if the prefix is null
    */
   @Override
   public ArrayList<String> getWordsWithPrefix(String prefix) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
-    return null;
+
+    if (prefix == null) {
+      throw new IllegalArgumentException();
+    }
+    
+    if (prefix.length() == 0) {
+      ArrayList<String> allWords = new ArrayList<String>();
+      collectWordsAtNode(root, allWords);
+      return allWords;
+    }
+
+    return getWordsWithPrefix(root, prefix);
+  }
+
+  private ArrayList<String> getWordsWithPrefix(TNode current, String prefix) {
+
+    char firstLetter = prefix.charAt(0);
+    TNode node = null;
+
+    for (TNode child : current.childList) {
+      if (child.letter == firstLetter) {
+        node = child;
+        break;
+      }
+    }
+
+    if (null == node) {
+      return new ArrayList<String>();
+    }
+
+    if (prefix.length() == 1) {
+      ArrayList<String> wordsAtNode = new ArrayList<String>();
+      collectWordsAtNode(node, wordsAtNode);
+      return wordsAtNode;
+    } else {
+      return getWordsWithPrefix(node, prefix.substring(1));
+    }
+  }
+
+  private void collectWordsAtNode(TNode current, ArrayList<String> wordsWithPrefix) {
+    // TODO you're getting the idea.
   }
 
   /**

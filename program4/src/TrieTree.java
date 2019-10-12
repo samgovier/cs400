@@ -75,7 +75,6 @@ public class TrieTree implements PrefixTreeADT {
   }
 
   private void insert(TNode current, String word) {
-    // TODO handle alphabetical order, and no calling sort methods!
     char firstLetter = word.charAt(0);
     TNode node = null;
     for (TNode child : current.childList) {
@@ -90,14 +89,17 @@ public class TrieTree implements PrefixTreeADT {
       int childListInd = 0;
       if (!current.childList.isEmpty()) {
         do {
-          if ((node.letter < current.childList.get(childListInd).letter)) {
+          if ((childListInd >= current.childList.size())
+              || (node.letter < current.childList.get(childListInd).letter)) {
             current.childList.add(childListInd, node);
             break;
           }
           childListInd++;
-        } while (childListInd < current.childList.size());
+
+        } while (childListInd < current.childList.size() + 1);
+      } else {
+        current.childList.add(node);
       }
-      current.childList.add(node);
     }
 
     if (word.length() == 1) {
@@ -142,7 +144,6 @@ public class TrieTree implements PrefixTreeADT {
 
   private int getFrequency(TNode current, String word) {
 
-    // TODO this is the idea... tighten the logic
     char firstLetter = word.charAt(0);
     TNode node = null;
 
@@ -159,9 +160,9 @@ public class TrieTree implements PrefixTreeADT {
 
     if (word.length() == 1) {
       return node.endWordCount;
-    } else {
-      return getFrequency(node, word.substring(1));
     }
+
+    return getFrequency(node, word.substring(1));
   }
 
   /**
@@ -183,9 +184,7 @@ public class TrieTree implements PrefixTreeADT {
     }
 
     if (prefix.length() == 0) {
-      ArrayList<String> allWords = new ArrayList<String>();
-      collectWordsAtNode(root, allWords);
-      return allWords;
+      return collectWordsAtNode(root);
     }
 
     return getWordsWithPrefix(root, prefix);
@@ -208,16 +207,21 @@ public class TrieTree implements PrefixTreeADT {
     }
 
     if (prefix.length() == 1) {
-      ArrayList<String> wordsAtNode = new ArrayList<String>();
-      collectWordsAtNode(node, wordsAtNode);
-      return wordsAtNode;
-    } else {
-      return getWordsWithPrefix(node, prefix.substring(1));
+      return collectWordsAtNode(node);
     }
+
+    return getWordsWithPrefix(node, prefix.substring(1));
   }
 
-  private void collectWordsAtNode(TNode current, ArrayList<String> wordsWithPrefix) {
-    // TODO you're getting the idea.
+  private ArrayList<String> collectWordsAtNode(TNode current) {
+    
+    ArrayList<String> wordsAtNode = new ArrayList<String>();
+    for (TNode child : current.childList) {
+      if (child.isEndOfWord) {
+        
+      }
+    }
+    return wordsAtNode.addAll(collectWordsAtNode);
   }
 
   /**

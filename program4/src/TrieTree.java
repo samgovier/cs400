@@ -87,6 +87,16 @@ public class TrieTree implements PrefixTreeADT {
 
     if (null == node) {
       node = new TNode(firstLetter);
+      int childListInd = 0;
+      if (!current.childList.isEmpty()) {
+        do {
+          if ((node.letter < current.childList.get(childListInd).letter)) {
+            current.childList.add(childListInd, node);
+            break;
+          }
+          childListInd++;
+        } while (childListInd < current.childList.size());
+      }
       current.childList.add(node);
     }
 
@@ -171,7 +181,7 @@ public class TrieTree implements PrefixTreeADT {
     if (prefix == null) {
       throw new IllegalArgumentException();
     }
-    
+
     if (prefix.length() == 0) {
       ArrayList<String> allWords = new ArrayList<String>();
       collectWordsAtNode(root, allWords);

@@ -66,9 +66,9 @@ public class TrieTree implements PrefixTreeADT {
    * @throws IllegalArgumentException if input string is null or length is 0
    */
   @Override
-  public void insert(String word) {
+  public void insert(String word) throws IllegalArgumentException {
     if (word == null || word.length() == 0) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Input string must not be null or length 0");
     }
 
     insert(root, word);
@@ -86,10 +86,11 @@ public class TrieTree implements PrefixTreeADT {
 
     if (null == node) {
       node = new TNode(firstLetter);
-      int childListInd = 0;
       if (!current.childList.isEmpty()) {
+        int childListInd = 0;
+        // TODO this loop could be tighter
         do {
-          if ((childListInd >= current.childList.size())
+          if ((childListInd == current.childList.size())
               || (node.letter < current.childList.get(childListInd).letter)) {
             current.childList.add(childListInd, node);
             break;
@@ -97,7 +98,9 @@ public class TrieTree implements PrefixTreeADT {
           childListInd++;
 
         } while (childListInd < current.childList.size() + 1);
-      } else {
+      }
+      
+      else {
         current.childList.add(node);
       }
     }
@@ -136,7 +139,7 @@ public class TrieTree implements PrefixTreeADT {
   public int getFrequency(String word) throws IllegalArgumentException {
 
     if (word == null || word.length() == 0) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Input string must not be null or length 0");
     }
 
     return getFrequency(root, word);
@@ -180,14 +183,27 @@ public class TrieTree implements PrefixTreeADT {
   public ArrayList<String> getWordsWithPrefix(String prefix) throws IllegalArgumentException {
 
     if (prefix == null) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Input string must not be null");
     }
 
     if (prefix.length() == 0) {
-      return collectWordsAtNode(root);
+      
+      ArrayList<String> wordsAtNode = new ArrayList<String>();
+      
+      for (TNode child : root.childList) {
+        collectWordsAtNode(child, "", wordsAtNode);
+      }
+      
+      return wordsAtNode;
     }
 
-    return getWordsWithPrefix(root, prefix);
+    ArrayList<String> wordsAtNode = getWordsWithPrefix(root, prefix);
+    
+    for (int i = 0; i < wordsAtNode.size(); i++) {
+      wordsAtNode.set(i, prefix.concat(wordsAtNode.get(i)));
+    }
+
+    return wordsAtNode;
   }
 
   private ArrayList<String> getWordsWithPrefix(TNode current, String prefix) {
@@ -207,21 +223,31 @@ public class TrieTree implements PrefixTreeADT {
     }
 
     if (prefix.length() == 1) {
-      return collectWordsAtNode(node);
+      ArrayList<String> wordsAtNode = new ArrayList<String>();
+      
+      if (node.isEndOfWord) {
+        wordsAtNode.add("");
+      }
+      
+      for (TNode child : node.childList) {
+        collectWordsAtNode(child, "", wordsAtNode);
+      }
+      
+      return wordsAtNode;
     }
 
     return getWordsWithPrefix(node, prefix.substring(1));
   }
 
-  private ArrayList<String> collectWordsAtNode(TNode current) {
+  private void collectWordsAtNode(TNode current, String suffix, ArrayList<String> wordsAtNode) {
     
-    ArrayList<String> wordsAtNode = new ArrayList<String>();
-    for (TNode child : current.childList) {
-      if (child.isEndOfWord) {
-        
-      }
+    if (current.isEndOfWord) {
+      wordsAtNode.add(suffix + current.letter);
     }
-    return wordsAtNode.addAll(collectWordsAtNode);
+    
+    for (TNode child : current.childList) {
+      collectWordsAtNode(child, suffix + current.letter, wordsAtNode);
+    }
   }
 
   /**

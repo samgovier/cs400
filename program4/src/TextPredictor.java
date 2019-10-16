@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Builds a trie with words from a .txt file, then uses the tree to predict words given a prefix. Prompts the user to look up a prefix and gives how often the words show up. It will keep accepting user input until we get 'qqq'.
+ * Builds a trie with words from a .txt file, then uses the tree to predict words given a prefix.
+ * Prompts the user to look up a prefix and gives how often the words show up. It will keep
+ * accepting user input until we get 'qqq'.
  */
 public class TextPredictor {
   private static final String FILE_NAME = "harry_potter.txt";
@@ -86,7 +88,7 @@ public class TextPredictor {
 
       // close the scanner one we're out of input
       input.close();
-      
+
       // print statisticts
       System.out.println(
           "A tree of size " + tree.getSize() + " was created from file \"" + FILE_NAME + "\".");
@@ -125,7 +127,7 @@ public class TextPredictor {
         if (predictedWords.isEmpty()) {
           System.out.println("There are no matches for the prefix \"" + request + "\"");
         }
-        
+
         // else print the words and find the most predicted
         else {
 
@@ -138,6 +140,8 @@ public class TextPredictor {
           // find the word with the given prefix that occurs the most in the text.
           for (String word : predictedWords) {
             int frequency = tree.getFrequency(word);
+
+            // if the frequency is higher than the max, set a new max
             if (frequency > maxFrequency) {
               maxFrequency = frequency;
               maxWord = word;

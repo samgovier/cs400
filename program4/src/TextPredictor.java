@@ -155,7 +155,7 @@ public class TextPredictor {
           System.out.println("The predicted word is: " + maxWord);
         }
 
-      } while (request != "qqq");
+      } while (!request.equals("qqq"));
 
       // close the scanner
       input.close();

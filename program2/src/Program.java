@@ -9,18 +9,19 @@ public class Program {
     System.out.println(treetest.isEmpty());
 
     try {
-      treetest.insert(5, "TWO");
-      treetest.insert(9, "TEN");
-      treetest.insert(6, "ONE");
+      treetest.insert(1, "TWO");
+      //treetest.insert(9, "TEN");
+      //treetest.insert(6, "ONE");
       
-      treetest.insert(4, "HELLO:");
       
-      treetest.insert(8, "HUH");
-      treetest.insert(3, "THREE");
+      //treetest.insert(8, "HUH");
       treetest.insert(2, "PSYCH");
-      treetest.insert(7, "hey");
-      treetest.insert(1, "one more");
-      treetest.delete(20);
+      treetest.insert(3, "THREE");
+      treetest.insert(4, "HELLO:");
+      treetest.insert(5, "NO");
+      //treetest.insert(7, "hey");
+      //treetest.insert(1, "one more");
+      treetest.delete(1);
       System.out.println(treetest.get(5));
       System.out.println(treetest.get(2));
       System.out.println(treetest.isEmpty());

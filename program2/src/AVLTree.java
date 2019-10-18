@@ -189,30 +189,30 @@ public class AVLTree<K extends Comparable<K>, V> implements TreeADT<K, V> {
   private TreeNode<K, V> rebalance(TreeNode<K, V> root) {
 
     // if the root is left-child heavy, balance
-    if (root.getBalance() >= 2) {
+    if (root.getBalance() > 1) {
 
       // if the mis-balance runs all the way left, simply rotate right
-      if (root.left.getBalance() == 1) {
+      if (root.left.getBalance() >= 0) {
         root = rotateRight(root);
       }
 
       // if the mis-balance goes back right, rotate the left child then rotate right
-      else if (root.left.getBalance() == -1) {
+      else if (root.left.getBalance() < 0) {
         root.left = rotateLeft(root.left);
         root = rotateRight(root);
       }
     }
 
     // else if the root is right-child heavy, balance
-    else if (root.getBalance() <= -2) {
+    else if (root.getBalance() < -1) {
 
       // if the mis-balance runs all the way right, simply rotate left
-      if (root.right.getBalance() == -1) {
+      if (root.right.getBalance() <= 0) {
         root = rotateLeft(root);
       }
 
       // if the mis-balance goes back left, rotate the right child then rotate left
-      else if (root.right.getBalance() == 1) {
+      else if (root.right.getBalance() > 0) {
         root.right = rotateRight(root.right);
         root = rotateLeft(root);
       }

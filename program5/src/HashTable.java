@@ -21,13 +21,10 @@
 // Online Sources: NONE
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
-import HashTable.HashNode;
 
 /**
  * Hash table data structure. This hash table is an array of linked lists with key/value pairs. The
- * hash index will be calculated as follows: int hashIndex = Math.abs(key.hashCode()) %
- * this.table.length; Your class may not use any import statements May not add any public members to
- * ADT or implementation.
+ * hash index is calculated as the absolute value of the key hashcode mod table length.
  * 
  * @param <K> the key must not be null and must be Comparable
  * @param <V> the data value associated with a given key
@@ -35,7 +32,7 @@ import HashTable.HashNode;
  * @param <K> key
  * @param <V> value
  */
-// @SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")
 public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V> {
 
   /**
@@ -79,7 +76,7 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
   public HashTable(int initialCapacity, double loadFactorThreshold) {
     this.loadFactorThreshold = loadFactorThreshold;
     this.numKeys = 0;
-    // initialize buckets
+    // initialize LinkedList buckets
     table = (HashNode<K, V>[]) new HashNode[initialCapacity];
   }
 
@@ -95,10 +92,60 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
    */
   @Override
   public void insert(K key, V value) throws DuplicateKeyException, NullKeyException {
-    // TODO Auto-generated method stub
-    // int hashIndex = Math.abs(key.hashCode()) % this.table.length;
 
+    if (null == key) {
+      throw new NullKeyException("the passed key is null.");
+    }
 
+    // the hashIndex calculation
+    int hashIndex = Math.abs(key.hashCode()) % this.table.length;
+
+    if (null != table[hashIndex]) {
+      HashNode<K, V> current = table[hashIndex];
+      if (current.key == key) {
+        throw new DuplicateKeyException("Key already exists in the hash table.");
+      }
+      while (current.next != null) {
+        if (current.next.key == key) {
+          throw new DuplicateKeyException("Key already exists in the hash table.");
+        }
+        current = current.next;
+      }
+      current.next = new HashNode(key, value, null);
+      numKeys++;
+      testResize();
+    } else {
+      table[hashIndex] = new HashNode(key, value, null);
+      numKeys++;
+      testResize();
+    }
+
+  }
+
+  /**
+   * This method resizes the hash table when the load factor exceeds the threshold
+   * 
+   * @throws DuplicateKeyException from insert is the resized key is already in the data structure
+   * @throws NullKeyException      from insert if the resized key is null
+   */
+  private void testResize() throws DuplicateKeyException, NullKeyException {
+    if (this.getLoadFactor() >= loadFactorThreshold) {
+      HashNode<K, V>[] oldTable = table;
+      table = (HashNode<K, V>[]) new HashNode[2 * table.length + 1];
+      numKeys = 0;
+
+      for (HashNode<K, V> arrayNode : oldTable) {
+        if (null != arrayNode) {
+
+          insert(arrayNode.key, arrayNode.value);
+          HashNode<K, V> current = arrayNode;
+          while (null != current.next) {
+            current = current.next;
+            insert(current.key, current.value);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -110,7 +157,37 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
    */
   @Override
   public boolean remove(K key) throws NullKeyException {
-    // TODO Auto-generated method stub
+
+    if (null == key) {
+      throw new NullKeyException("the passed key is null.");
+    }
+
+    // the hashIndex calculation
+    int hashIndex = Math.abs(key.hashCode()) % this.table.length;
+
+    HashNode<K, V> current = table[hashIndex];
+
+    if (null == current) {
+      return false;
+    }
+
+    if (current.key == key) {
+      table[hashIndex] = current.next;
+      numKeys--;
+      return true;
+    }
+
+    while (current.next != null) {
+
+      if (current.next.key == key) {
+        current.next = current.next.next;
+        numKeys--;
+        return true;
+      }
+
+      current = current.next;
+    }
+
     return false;
   }
 
@@ -124,8 +201,26 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
    */
   @Override
   public V get(K key) throws KeyNotFoundException, NullKeyException {
-    // TODO Auto-generated method stub
-    return null;
+
+    if (null == key) {
+      throw new NullKeyException("the passed key is null.");
+    }
+
+    // the hashIndex calculation
+    int hashIndex = Math.abs(key.hashCode()) % this.table.length;
+
+    HashNode<K, V> current = table[hashIndex];
+    
+    while (current != null) {
+      
+      if (current.key == key) {
+        return current.value;
+      }
+      
+      current = current.next;
+    }
+
+    throw new KeyNotFoundException("the passed key was not found.");
   }
 
   /**
@@ -135,8 +230,7 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
    */
   @Override
   public int numKeys() {
-    // TODO Auto-generated method stub
-    return 0;
+    return numKeys;
   }
 
   /**
@@ -147,21 +241,17 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
    */
   @Override
   public double getLoadFactor() {
-    // TODO Auto-generated method stub
-    return 0;
+    return numKeys / table.length;
   }
 
   /**
-   * Returns the current capacity (table size) of the hash table array. The initial capacity must be
-   * a positive integer, 1 or greater and is specified in the constructor. When the load factor >=
-   * threshold, the capacity must increase to: 2 * capacity + 1.
+   * Returns the current capacity (table size) of the hash table array.
    * 
    * @return capacity
    */
   @Override
   public int getCapacity() {
-    // TODO Auto-generated method stub
-    return 0;
+    return table.length;
   }
 
   /**

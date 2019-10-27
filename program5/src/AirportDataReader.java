@@ -34,11 +34,15 @@ enum UserCommand {
 
 
 /**
- * Reads in airport data from a CSV file, constructs an AVL tree, and prompts user to look up an
- * airport.
+ * Reads in airport data from a CSV file, constructs a hash table, and provides a CLI to insert,
+ * delete, get, print. Handle input appropriately using helper methods and exit when requested.
  */
 public class AirportDataReader {
+
+  // hashTable is the hash table of Airport objects, stored via their ID codes
   private static HashTable<String, Airport> hashTable = new HashTable<String, Airport>();
+
+  // filename is the name of the file to be parsed
   private static String filename = "airportdatareduced.csv";
 
   /**
@@ -48,6 +52,8 @@ public class AirportDataReader {
   private static void parseCSV() {
 
     try {
+
+      // csvScnr is a scanner to take in the requested file
       Scanner csvScnr = new Scanner(new File(filename));
 
       // skip the first line of headers
@@ -152,6 +158,8 @@ public class AirportDataReader {
    */
   private static void handleInsert(String id, String city, String name, int rank) {
     try {
+
+      // create the airport object and try inserting
       Airport airport = new Airport(id, city, name, rank);
       hashTable.insert(id, airport);
       System.out.println();
@@ -170,6 +178,8 @@ public class AirportDataReader {
   private static void handleGet(String id) {
 
     try {
+
+      // tries to get the requested airport id
       Airport airport = hashTable.get(id);
 
       // print statement for displaying the airport to the user
@@ -191,9 +201,11 @@ public class AirportDataReader {
    */
   private static void handleRemove(String id) {
 
+    // remove result is the boolean stating whether the remove was successful
     boolean removeResult = false;
 
     try {
+      // set remove result using the remove action on the hash table
       removeResult = hashTable.remove(id);
     } catch (NullKeyException e1) {
       // print statement for when a null key is passed in
@@ -201,6 +213,7 @@ public class AirportDataReader {
       return;
     }
 
+    // print whether the remove was successful
     if (removeResult) {
       // print statement for when an airport was successfully removed
       System.out.println("\t" + id + " was removed from the database.");

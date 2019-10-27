@@ -39,17 +39,48 @@ enum UserCommand {
  */
 public class AirportDataReader {
   private static HashTable<String, Airport> hashTable = new HashTable<String, Airport>();
-  private static String filename = "airportdata.csv";
+  private static String filename = "airportdatareduced.csv";
 
   /**
    * Parses a csv file, creates new Airport objects from each row, and inserts each Airport object
    * into the hash table.
    */
   private static void parseCSV() {
-    // TODO: implement this method
 
-    // print statement for when file is not found
-    System.out.println("File not found.");
+    try {
+      Scanner csvScnr = new Scanner(new File(filename));
+
+      // skip the first line of headers
+      csvScnr.nextLine();
+
+      // while there is still data, add to the hashTable
+      while (csvScnr.hasNextLine()) {
+
+        // row is te next row of data
+        String row = csvScnr.nextLine();
+
+        // data is the row split into an array via commas
+        String[] data = row.split(",");
+
+        // try to insert into the hash table using the ID and Airport object.
+        // If there's an exception, print it and keep trying
+        try {
+          hashTable.insert(data[3],
+              new Airport(data[3], data[4], data[5], Integer.parseInt(data[0])));
+        } catch (NullKeyException e1) {
+          System.out.println(e1.getMessage());
+        } catch (DuplicateKeyException e2) {
+          System.out.println(e2.getMessage());
+        }
+      }
+
+      // close the scanner to prevent memory leaks
+      csvScnr.close();
+    } catch (FileNotFoundException e1) {
+      // print statement for when file is not found
+      System.out.println("File not found.");
+      return;
+    }
   }
 
   /**
@@ -137,17 +168,20 @@ public class AirportDataReader {
    * @param id airport id
    */
   private static void handleGet(String id) {
-    // TODO: implement this method
 
-    // print statement for displaying the airport to the user
-    System.out.println("\t" + airport);
+    try {
+      Airport airport = hashTable.get(id);
 
-    // print statement for when the key is not found
-    System.out.println("\t" + id + " was not found in the airport database.");
+      // print statement for displaying the airport to the user
+      System.out.println("\t" + airport);
 
-    // print statement for when a null key is passed in
-    System.out.println("\tAirport ID cannot be null.");
-
+    } catch (NullKeyException e1) {
+      // print statement for when a null key is passed in
+      System.out.println("\tAirport ID cannot be null.");
+    } catch (KeyNotFoundException e2) {
+      // print statement for when the key is not found
+      System.out.println("\t" + id + " was not found in the airport database.");
+    }
   }
 
   /**
@@ -156,17 +190,24 @@ public class AirportDataReader {
    * @param id airport id
    */
   private static void handleRemove(String id) {
-    // TODO: implement this method
 
-    // print statement for when an airport was successfully removed
-    System.out.println("\t" + id + " was removed from the database.");
+    boolean removeResult = false;
 
-    // print statement for when the airport was not found
-    System.out.println("\t" + id + " was not found in the database.");
+    try {
+      removeResult = hashTable.remove(id);
+    } catch (NullKeyException e1) {
+      // print statement for when a null key is passed in
+      System.out.println("\tAirport ID cannot be null.");
+      return;
+    }
 
-    // print statement for when a null key is passed in
-    System.out.println("\tAirport ID cannot be null.");
-
+    if (removeResult) {
+      // print statement for when an airport was successfully removed
+      System.out.println("\t" + id + " was removed from the database.");
+    } else {
+      // print statement for when the airport was not found
+      System.out.println("\t" + id + " was not found in the database.");
+    }
   }
 
   /**

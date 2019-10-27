@@ -241,7 +241,7 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
    */
   @Override
   public double getLoadFactor() {
-    return numKeys / table.length;
+    return (double) numKeys / (double) table.length;
   }
 
   /**

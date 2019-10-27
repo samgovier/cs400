@@ -81,8 +81,8 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
   }
 
   /**
-   * Adds the key/value pair to the hash table and increases the number of keys. This method resizes
-   * the hash table when load factor >= threshold Capacity must increase to: 2 * capacity + 1. Once
+   * Adds the key/value pair to the hash table and increases the number of keys. The table is
+   * resized when load factor >= threshold Capacity must increase to: 2 * capacity + 1. Once
    * increased, capacity never decreases.
    * 
    * @param key
@@ -102,11 +102,11 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
 
     if (null != table[hashIndex]) {
       HashNode<K, V> current = table[hashIndex];
-      if (current.key == key) {
+      if (current.key.equals(key)) {
         throw new DuplicateKeyException("Key already exists in the hash table.");
       }
       while (current.next != null) {
-        if (current.next.key == key) {
+        if (current.next.key.equals(key)) {
           throw new DuplicateKeyException("Key already exists in the hash table.");
         }
         current = current.next;
@@ -171,7 +171,7 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
       return false;
     }
 
-    if (current.key == key) {
+    if (current.key.equals(key)) {
       table[hashIndex] = current.next;
       numKeys--;
       return true;
@@ -179,7 +179,7 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
 
     while (current.next != null) {
 
-      if (current.next.key == key) {
+      if (current.next.key.equals(key)) {
         current.next = current.next.next;
         numKeys--;
         return true;
@@ -210,13 +210,13 @@ public class HashTable<K extends Comparable<K>, V> implements HashTableADT<K, V>
     int hashIndex = Math.abs(key.hashCode()) % this.table.length;
 
     HashNode<K, V> current = table[hashIndex];
-    
+
     while (current != null) {
-      
-      if (current.key == key) {
+
+      if (current.key.equals(key)) {
         return current.value;
       }
-      
+
       current = current.next;
     }
 

@@ -4,40 +4,42 @@ public class Program {
   public static void main(String[] args) {
 
     HashTable<Integer, String> testTable = new HashTable<Integer, String>();
-    testTable = new HashTable<Integer, String>(3, 2.01);
+    testTable = new HashTable<Integer, String>(5, 1);
     try {
       testTable.insert(1, "for real this time");
-      System.out.println(testTable.getLoadFactor());
       testTable.insert(2, "Worshipful Soul");
-      System.out.println(testTable.getLoadFactor());
       testTable.insert(3, "Funky Sole");
-      System.out.println(testTable.getLoadFactor());
       testTable.insert(4, "Wait a minute... it's a mix");
-      System.out.println(testTable.getLoadFactor());
 
-       testTable.insert(5, "Well that's... something");
+      testTable.insert(5, "Well that's... something");
       testTable.insert(6, "Panacea");
-      System.out.println(testTable.getLoadFactor());
 
-       testTable.insert(7, "Pangaea");
-       testTable.insert(8, "Anaemia");
-       testTable.insert(9, "9051 and a few days");
-       testTable.insert(10, "A few Tens of Thousands More");
-       testTable.insert(11, "Enlightened Heart");
+      testTable.insert(7, "Pangaea");
+      testTable.insert(8, "Anaemia");
+      testTable.insert(9, "9051 and a few days");
+      testTable.insert(10, "A few Tens of Thousands More");
+      testTable.insert(11, "Enlightened Heart");
       testTable.insert(12, "con·cen·trate");
-      System.out.println(testTable.getLoadFactor());
 
-       testTable.insert(13, "For You");
+      testTable.insert(13, "For You");
       testTable.insert(14, "Breathe");
-      System.out.println(testTable.getLoadFactor());
 
-       testTable.insert(15, "f19");
+      testTable.insert(15, "f19");
       testTable.printHashTable();
 
-    } catch (DuplicateKeyException e1) {
+      System.out.println(testTable.get(1));
+      System.out.println(testTable.numKeys());
+      System.out.println(testTable.getLoadFactor());
+      System.out.println(testTable.getCapacity());
+      System.out.println(testTable.remove(8));
+      System.out.println(testTable.remove(15));
+      System.out.println(testTable.remove(14));
+
+
+      testTable.printHashTable();
+
+    } catch (Exception e1) {
       System.out.println(e1.getMessage());
-    } catch (NullKeyException e2) {
-      System.out.println(e2.getMessage());
     }
 
 

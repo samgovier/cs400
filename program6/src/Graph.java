@@ -1,5 +1,3 @@
-import java.util.List;
-
 //////////////////// ALL ASSIGNMENTS INCLUDE THIS SECTION /////////////////////
 //
 // Title: Graph
@@ -23,6 +21,7 @@ import java.util.List;
 // Online Sources: NONE
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,13 +41,29 @@ public class Graph<T> implements GraphADT<T> {
     // value is the value at this vertex
     private T value;
     
-    // TODO some sort of adjacency collection
+    // visited is whether this node has been visited for searches
+    private boolean visited;
+    
+    // successors is
+    private ArrayList<VNode> successors;
     
     private VNode(T value) {
       this.value = value;
+      visited = false;
     }
   }
 
+  private ArrayList<VNode> graphCollection;
+  private ArrayList<T> allVertices;
+  private int size;
+  private int order;
+  
+  public Graph() {
+    this.graphCollection = new ArrayList<VNode>();
+    this.allVertices = new ArrayList<T>();
+    this.size = 0;
+    this.order = 0;
+  }
   /**
    * Adds a new vertex to the graph. If the vertex already exists in the graph, returns without
    * throwing an exception or adding a vertex.
@@ -58,8 +73,20 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public void addVertex(T vertex) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
     
+    // if the passed vertex is null, throw IllegalArgumentException
+    if (null == vertex) {
+      throw new IllegalArgumentException("The passed vertex is null.");
+    }
+    
+    for (VNode vertexNode : graphCollection) {
+      if (vertexNode.value.equals(vertex)) {
+        return;
+      }
+    }
+    
+    graphCollection.add(new VNode(vertex));
+    allVertices.add(vertex);
   }
 
   /**
@@ -71,7 +98,19 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public void removeVertex(T vertex) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
+    
+    // if the passed vertex is null, throw IllegalArgumentException
+    if (null == vertex) {
+      throw new IllegalArgumentException("The passed vertex is null.");
+    }
+    
+    for (VNode vertexNode : graphCollection) {
+      if (vertexNode.value.equals(vertex)) {
+        for (VNode suc : vertexNode.successors) {
+          suc.successors.remove(vertexNode);
+        }
+      }
+    }
     
   }
 
@@ -112,8 +151,7 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public List<T> getAllVertices() {
-    // TODO Auto-generated method stub
-    return null;
+    return allVertices;
   }
 
   /**
@@ -137,8 +175,7 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public int size() {
-    // TODO Auto-generated method stub
-    return 0;
+    return size;
   }
 
   /**
@@ -148,8 +185,7 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public int order() {
-    // TODO Auto-generated method stub
-    return 0;
+    return order;
   }
   
   

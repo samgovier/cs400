@@ -37,19 +37,16 @@ public class Graph<T> implements GraphADT<T> {
    * VNode is the inner class
    */
   private class VNode {
-    
+
     // value is the value at this vertex
     private T value;
-    
-    // visited is whether this node has been visited for searches
-    private boolean visited;
-    
-    // successors is
+
+    // successors is an arrayList of all connected vertices
     private ArrayList<VNode> successors;
-    
+
     private VNode(T value) {
       this.value = value;
-      visited = false;
+      this.successors = new ArrayList<VNode>();
     }
   }
 
@@ -57,13 +54,14 @@ public class Graph<T> implements GraphADT<T> {
   private ArrayList<T> allVertices;
   private int size;
   private int order;
-  
+
   public Graph() {
     this.graphCollection = new ArrayList<VNode>();
     this.allVertices = new ArrayList<T>();
     this.size = 0;
     this.order = 0;
   }
+
   /**
    * Adds a new vertex to the graph. If the vertex already exists in the graph, returns without
    * throwing an exception or adding a vertex.
@@ -73,20 +71,19 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public void addVertex(T vertex) throws IllegalArgumentException {
-    
+
     // if the passed vertex is null, throw IllegalArgumentException
     if (null == vertex) {
       throw new IllegalArgumentException("The passed vertex is null.");
     }
-    
-    for (VNode vertexNode : graphCollection) {
-      if (vertexNode.value.equals(vertex)) {
-        return;
-      }
+
+    if (allVertices.contains(vertex)) {
+      return;
     }
-    
+
     graphCollection.add(new VNode(vertex));
     allVertices.add(vertex);
+    order++;
   }
 
   /**
@@ -98,20 +95,30 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public void removeVertex(T vertex) throws IllegalArgumentException {
-    
+
     // if the passed vertex is null, throw IllegalArgumentException
     if (null == vertex) {
       throw new IllegalArgumentException("The passed vertex is null.");
     }
-    
+
+    if (!allVertices.contains(vertex)) {
+      return;
+    }
+
+    allVertices.remove(vertex);
+
     for (VNode vertexNode : graphCollection) {
       if (vertexNode.value.equals(vertex)) {
         for (VNode suc : vertexNode.successors) {
           suc.successors.remove(vertexNode);
+          size--;
         }
+        graphCollection.remove(vertexNode);
+        order--;
+        return;
       }
     }
-    
+
   }
 
   /**
@@ -125,8 +132,39 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public void addEdge(T vertex1, T vertex2) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
-    
+
+    VNode vertexNode1 = null;
+    VNode vertexNode2 = null;
+
+    // if a passed vertex is null, throw IllegalArgumentException
+    if (null == vertex1 || null == vertex2) {
+      throw new IllegalArgumentException("One of the passed vertices is null.");
+    }
+
+    // if one of the vertices does not exist, return without modifying
+    if (!allVertices.contains(vertex1) || !allVertices.contains(vertex2)) {
+      return;
+    }
+
+    for (VNode vertexNode : graphCollection) {
+      if (vertexNode.value.equals(vertex1)) {
+        vertexNode1 = vertexNode;
+      } else if (vertexNode.value.equals(vertex2)) {
+        vertexNode2 = vertexNode;
+      }
+
+      if (vertexNode1 != null && vertexNode2 != null) {
+        break;
+      }
+    }
+
+    if (!vertexNode1.successors.contains(vertexNode2)
+        && !vertexNode2.successors.contains(vertexNode1)) {
+      vertexNode1.successors.add(vertexNode2);
+      vertexNode2.successors.add(vertexNode1);
+      size++;
+    }
+
   }
 
   /**
@@ -140,8 +178,35 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public void removeEdge(T vertex1, T vertex2) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
-    
+
+    VNode vertexNode1 = null;
+    VNode vertexNode2 = null;
+
+    // if a passed vertex is null, throw IllegalArgumentException
+    if (null == vertex1 || null == vertex2) {
+      throw new IllegalArgumentException("One of the passed vertices is null.");
+    }
+
+    // if one of the vertices does not exist, return without modifying
+    if (!allVertices.contains(vertex1) || !allVertices.contains(vertex2)) {
+      return;
+    }
+
+    for (VNode vertexNode : graphCollection) {
+      if (vertexNode.value.equals(vertex1)) {
+        vertexNode1 = vertexNode;
+      } else if (vertexNode.value.equals(vertex2)) {
+        vertexNode2 = vertexNode;
+      }
+
+      if (vertexNode1 != null && vertexNode2 != null) {
+        break;
+      }
+    }
+
+    if (vertexNode1.successors.remove(vertexNode2) && vertexNode2.successors.remove(vertexNode1)) {
+      size--;
+    }
   }
 
   /**
@@ -164,8 +229,28 @@ public class Graph<T> implements GraphADT<T> {
    */
   @Override
   public List<T> getAdjacentVerticesOf(T vertex) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
-    return null;
+
+    // if the passed vertex is null, throw IllegalArgumentException
+    if (null == vertex) {
+      throw new IllegalArgumentException("The passed vertex is null.");
+    }
+
+    if (!allVertices.contains(vertex)) {
+      return new ArrayList<T>();
+    }
+
+    for (VNode vertexNode : graphCollection) {
+      if (vertexNode.value.equals(vertex)) {
+        ArrayList<T> adjacentVertices = new ArrayList<T>();
+        for (VNode suc : vertexNode.successors) {
+          adjacentVertices.add(suc.value);
+        }
+        return adjacentVertices;
+      }
+    }
+
+    // if we make it here, somehow the vertex wasn't found: return an empty arrayList
+    return new ArrayList<T>();
   }
 
   /**
@@ -187,6 +272,6 @@ public class Graph<T> implements GraphADT<T> {
   public int order() {
     return order;
   }
-  
-  
+
+
 }

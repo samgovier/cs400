@@ -44,9 +44,23 @@ public class SocialNetwork {
    */
   private static Person[] parseJSON() throws Exception {
     // array storing the Person objects created from the JSON file to be loaded later in the graph
-    Person[] people = null;
+    Person[] people = new Person[4];
 
-    // TODO: create People objects by parsing JSON file and add them to array to be returned
+    JSONParser parser = new JSONParser();
+    JSONObject contact = (JSONObject) parser.parse(new FileReader(filename));
+    JSONArray socialNetwork = (JSONArray)contact.get("socialNetwork");
+    
+    for (int i = 0; i < people.length; i++) {
+      people[i] = new Person();
+      JSONObject personJSON = (JSONObject)socialNetwork.get(i);
+      people[i].setName((String)personJSON.get("name"));
+      JSONArray friendsJSON = (JSONArray)personJSON.get("friends");
+      String[] friendsArray = new String[friendsJSON.size()];
+      for (int j = 0; j < friendsArray.length; j++) {
+        friendsArray[j] = (String)friendsJSON.get(j);
+      }
+      people[i].setFriends(friendsArray);
+    }
 
     return people;
   }

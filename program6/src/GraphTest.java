@@ -42,19 +42,31 @@ import org.junit.runners.MethodSorters;
 public class GraphTest {
   private Graph<String> graph;
 
+  // globalTimeout is a 2000 millisecond timeout
   @Rule
   public Timeout globalTimeout = new Timeout(2000, TimeUnit.MILLISECONDS);
 
+  /**
+   * setUp initializes a new graph for each test
+   * @throws Exception
+   */
   @Before
   public void setUp() throws Exception {
     this.graph = new Graph<String>();
   }
 
+  /**
+   * tearDown sets the current graph to null
+   * @throws Exception
+   */
   @After
   public void tearDown() throws Exception {
     this.graph = null;
   }
 
+  /**
+   * test00 tries to add a null vertex to test for exceptions
+   */
   @Test
   public final void test00_addNullVertex() {
     try {
@@ -67,6 +79,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test01 tries to remove a nonexistent vertex to test for exceptions
+   */
   @Test
   public final void test01_removeNonexistentVertex() {
     try {
@@ -76,6 +91,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test02 adds an edge and tests that it exists
+   */
   @Test
   public final void test02_addEdge() {
     try {
@@ -93,6 +111,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test03 removes an edge to see if removal works
+   */
   @Test
   public final void test03_removeEdge() {
     try {
@@ -113,6 +134,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test adding vertices to see if order would match
+   */
   @Test
   public final void test04_testOrderAdd() {
     try {
@@ -129,6 +153,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test removing to see if order would match
+   */
   @Test
   public final void test05_testOrderRemove() {
     try {
@@ -149,6 +176,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test adding vertices and edges to see if size would match
+   */
   @Test
   public final void test06_testSizeAdd() {
     try {
@@ -171,6 +201,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test removing vertices and edges to see if size will be consistent
+   */
   @Test
   public final void test07_testSizeRemove() {
     try {
@@ -202,6 +235,9 @@ public class GraphTest {
 
   }
 
+  /**
+   * test adding duplicates to see if size and order would be consistent
+   */
   @Test
   public final void test08_testDuplicates() {
     try {
@@ -228,6 +264,9 @@ public class GraphTest {
     }
   }
 
+  /**
+   * test removing non-existent vertices and edges to test consistency
+   */
   @Test
   public final void test09_testNonexistent() {
     graph.addVertex("s");
@@ -255,6 +294,9 @@ public class GraphTest {
     assertEquals("test09: failed - Nonexistent remove size mismatch", 0, graph.size());
   }
 
+  /**
+   * test getting vertex and edge lists to test for matching
+   */
   @Test
   public final void test10_gettingVertices() {
     String[] fullArray = new String[] {"s", "a", "m", "r", "o", "c", "k"};

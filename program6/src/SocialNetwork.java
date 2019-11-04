@@ -30,10 +30,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 /**
- * Represents a social network.
+ * Represents a social network: create a graph and display the network of people and their friends
+ * as recorded in the corresponding json file
  */
 public class SocialNetwork {
+
+  // graph is the social network graph
   private static Graph<String> graph;
+
+  // filename is the name of the social network json file
   private static String filename = "social-network.json";
 
   /**
@@ -43,25 +48,46 @@ public class SocialNetwork {
    * @throws Exception like FileNotFound, JsonParseException
    */
   private static Person[] parseJSON() throws Exception {
-    // array storing the Person objects created from the JSON file to be loaded later in the graph
-    Person[] people = new Person[4];
-
-    JSONParser parser = new JSONParser();
-    JSONObject contact = (JSONObject) parser.parse(new FileReader(filename));
-    JSONArray socialNetwork = (JSONArray)contact.get("socialNetwork");
     
+    // array storing the Person objects created from the JSON file to be loaded later in the graph
+    Person[] people = null;
+
+    // parser is the JSON parser used for parsing JSON
+    JSONParser parser = new JSONParser();
+    
+    // jsonfile is the JSON data from the corresponding file
+    JSONObject jsonfile = (JSONObject) parser.parse(new FileReader(filename));
+    
+    // socialNetwork is the social network data from the json file
+    JSONArray socialNetwork = (JSONArray) jsonfile.get("socialNetwork");
+    
+    // people is initialized with the size of the social network
+    people = new Person[socialNetwork.size()];
+
+    // for each person, parse and add that data to people
     for (int i = 0; i < people.length; i++) {
+      
+      // initialize the person in people
       people[i] = new Person();
-      JSONObject personJSON = (JSONObject)socialNetwork.get(i);
-      people[i].setName((String)personJSON.get("name"));
-      JSONArray friendsJSON = (JSONArray)personJSON.get("friends");
+      
+      // personJSON is the gotten JSON object from socialNetwork
+      JSONObject personJSON = (JSONObject) socialNetwork.get(i);
+      
+      // set the name of the person to the name from personJSON
+      people[i].setName((String) personJSON.get("name"));
+      
+      // get the friends json array
+      JSONArray friendsJSON = (JSONArray) personJSON.get("friends");
+      
+      // initialize a friends array to add to the person object and fill it
       String[] friendsArray = new String[friendsJSON.size()];
       for (int j = 0; j < friendsArray.length; j++) {
-        friendsArray[j] = (String)friendsJSON.get(j);
+        friendsArray[j] = (String) friendsJSON.get(j);
       }
       people[i].setFriends(friendsArray);
     }
 
+    // return the people array
     return people;
   }
 
@@ -71,8 +97,14 @@ public class SocialNetwork {
    * @param people an array of People objects generated from a json file
    */
   private static void constructGraph(Person[] people) {
+    
+    // for each person in the people array, add to the graph
     for (Person person : people) {
+      
+      // add the name as the vertex
       graph.addVertex(person.getName());
+      
+      // for each friend, add the vertex if they don't exist, and add an edge between them
       for (String friend : person.getFriends()) {
         graph.addVertex(friend);
         graph.addEdge(person.getName(), friend);
@@ -85,11 +117,20 @@ public class SocialNetwork {
       filename = args[0]; // allows alternate filename to be passed in through args
     }
 
+    // initialize graph
     graph = new Graph<String>();
     try {
+      
+      // parse the JSON file
       Person[] persons = parseJSON();
+      
+      // construct the graph using persons
       constructGraph(persons);
+      
+      // get the vertices of the graph
       List<String> people = graph.getAllVertices();
+      
+      // sort the collection and print the people and their friend lists
       Collections.sort(people);
       System.out.println("Network: " + people);
       for (String person : people) {
@@ -98,6 +139,7 @@ public class SocialNetwork {
         System.out.println(person + "'s friends: " + friends);
       }
     } catch (Exception e) {
+      // throw any exceptions
       System.out.println("Error: An unexpected exception occurred");
     }
   }

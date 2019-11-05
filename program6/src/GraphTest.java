@@ -48,6 +48,7 @@ public class GraphTest {
 
   /**
    * setUp initializes a new graph for each test
+   * 
    * @throws Exception
    */
   @Before
@@ -57,6 +58,7 @@ public class GraphTest {
 
   /**
    * tearDown sets the current graph to null
+   * 
    * @throws Exception
    */
   @After
@@ -299,6 +301,8 @@ public class GraphTest {
    */
   @Test
   public final void test10_gettingVertices() {
+    
+    // fullArray and shortArray are used to compare for existing vertices
     String[] fullArray = new String[] {"s", "a", "m", "r", "o", "c", "k"};
     String[] shortArray = new String[] {"s", "o", "c", "k"};
     try {
@@ -337,5 +341,17 @@ public class GraphTest {
     } catch (Exception e) {
       fail("test010: failed - unexpected exception occurred");
     }
+  }
+
+  /**
+   * test if a vertex pointed at itself can exist, succeed if false
+   */
+  @Test
+  public final void test11_EdgeToSelf() {
+    graph.addVertex("a");
+    graph.addVertex("b");
+    graph.addEdge("a", "a");
+    assertFalse("test11: failed - Edge to Self exists",
+        graph.getAdjacentVerticesOf("a").contains("a"));
   }
 }

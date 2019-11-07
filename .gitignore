@@ -14,6 +14,7 @@
 # Package Files #
 *.jar
 !/program6/src/json-simple-1.1.1.jar
+!JavaFXDemo/src/application/jfxrt.jar
 *.war
 *.nar
 *.ear
@@ -113,6 +114,7 @@ local.properties
 # Package Files #
 *.jar
 !/program6/src/json-simple-1.1.1.jar
+!/JavaFXDemo/src/application/jfxrt.jar
 *.war
 *.nar
 *.ear

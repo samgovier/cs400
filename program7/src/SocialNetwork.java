@@ -24,14 +24,12 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
-
-// as well as the Java Collections framework and the Stream API.
 
 /**
  * Interface for a Social Network class which represents a graph of people in a social network and
@@ -42,6 +40,7 @@ import org.json.simple.parser.JSONParser;
 public class SocialNetwork implements SocialNetworkADT {
   private Graph<String> graph;
   private static String filename;
+  private List<String> snPeople;
 
   /**
    * Constructs a social network from a json file.
@@ -55,14 +54,14 @@ public class SocialNetwork implements SocialNetworkADT {
     try {
       Person[] persons = parseJSON();
       constructGraph(persons);
-      List<String> people = this.graph.getAllVertices();
-      Collections.sort(people);
-      /*
-       * feel free to use this code for testing purposes System.out.println("Network: " + people);
-       * for (String person : people) { List<String> friends =
-       * this.graph.getAdjacentVerticesOf(person); Collections.sort(friends);
-       * System.out.println(person + "'s friends: " + friends); }
-       */
+      this.snPeople = this.graph.getAllVertices();
+      Collections.sort(snPeople);
+
+      // feel free to use this code for testing purposes System.out.println("Network: " + people);
+      // for (String person : people) { List<String> friends =
+      // this.graph.getAdjacentVerticesOf(person); Collections.sort(friends);
+      // System.out.println(person + "'s friends: " + friends); }
+
     } catch (Exception e) {
       System.out.println("Error: An unexpected exception occurred");
     }
@@ -75,8 +74,49 @@ public class SocialNetwork implements SocialNetworkADT {
    * @throws Exception like FileNotFound, JsonParseException
    */
   private static Person[] parseJSON() throws Exception {
-    // TODO: use your code from P6
+
+    // array storing the Person objects created from the JSON file to be loaded later in the graph
+    Person[] people = null;
+
+    // parser is the JSON parser used for parsing JSON
+    JSONParser parser = new JSONParser();
+
+    // jsonfile is the JSON data from the corresponding file
+    JSONObject jsonfile = (JSONObject) parser.parse(new FileReader(filename));
+
+    // socialNetwork is the social network data from the json file
+    JSONArray socialNetwork = (JSONArray) jsonfile.get("socialNetwork");
+
+    // people is initialized with the size of the social network
+    people = new Person[socialNetwork.size()];
+
+    // for each person, parse and add that data to people
+    for (int i = 0; i < people.length; i++) {
+
+      // initialize the person in people
+      people[i] = new Person();
+
+      // personJSON is the gotten JSON object from socialNetwork
+      JSONObject personJSON = (JSONObject) socialNetwork.get(i);
+
+      // set the name of the person to the name from personJSON
+      people[i].setName((String) personJSON.get("name"));
+
+      // get the friends json array
+      JSONArray friendsJSON = (JSONArray) personJSON.get("friends");
+
+      // initialize a friends array to add to the person object and fill it
+      String[] friendsArray = new String[friendsJSON.size()];
+      for (int j = 0; j < friendsArray.length; j++) {
+        friendsArray[j] = (String) friendsJSON.get(j);
+      }
+      people[i].setFriends(friendsArray);
+    }
+
+    // return the people array
+    return people;
   }
+
 
   /**
    * Construct an undirected graph from array of Person objects.
@@ -84,7 +124,19 @@ public class SocialNetwork implements SocialNetworkADT {
    * @param people an array of People objects generated from a json file
    */
   private void constructGraph(Person[] people) {
-    // TODO: use your code from P6
+
+    // for each person in the people array, add to the graph
+    for (Person person : people) {
+
+      // add the name as the vertex
+      graph.addVertex(person.getName());
+
+      // for each friend, add the vertex if they don't exist, and add an edge between them
+      for (String friend : person.getFriends()) {
+        graph.addVertex(friend);
+        graph.addEdge(person.getName(), friend);
+      }
+    }
   }
 
   /**
@@ -96,8 +148,12 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public int averageFriendsPerPerson() {
-    // TODO Auto-generated method stub
-    return 0;
+    int totalFriends = 0;
+    for (String snPerson : snPeople) {
+      List<String> friends = graph.getAdjacentVerticesOf(snPerson);
+      totalFriends += friends.size();
+    }
+    return (int) Math.round((double) totalFriends / (double) snPeople.size());
   }
 
   /**
@@ -110,8 +166,31 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public Set<String> mutualFriends(String person1, String person2) {
-    // TODO Auto-generated method stub
-    return null;
+
+    if (null == person1 || null == person2) {
+      return new HashSet<String>();
+    }
+
+    List<String> person1Friends = graph.getAdjacentVerticesOf(person1);
+    List<String> person2Friends = graph.getAdjacentVerticesOf(person2);
+
+    if (person1Friends.size() <= 0 || person2Friends.size() <= 0) {
+      return new HashSet<String>();
+    }
+
+    HashSet<String> mutuals = new HashSet<String>();
+
+    for (String person1Friend : person1Friends) {
+      if (!person1Friend.equals(person2)) {
+        for (String person2Friend : person2Friends) {
+          if (person1Friend.equals(person2Friend)) {
+            mutuals.add(person1Friend);
+          }
+        }
+      }
+    }
+
+    return mutuals;
   }
 
   /**
@@ -123,8 +202,20 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public String socialButterfly() {
-    // TODO Auto-generated method stub
-    return null;
+
+    String socialButterfly = "";
+    int sbFriends = 0;
+
+    for (String snPerson : snPeople) {
+      List<String> friends = graph.getAdjacentVerticesOf(snPerson);
+      if ((socialButterfly.isBlank()) || (friends.size() > sbFriends)
+          || ((friends.size() == sbFriends) && (socialButterfly.compareTo(snPerson) > 0))) {
+        socialButterfly = snPerson;
+        sbFriends = friends.size();
+      }
+    }
+
+    return socialButterfly;
   }
 
   /**
@@ -137,8 +228,30 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public String influencer() {
-    // TODO Auto-generated method stub
-    return null;
+    String influencer = "";
+    int infFoF = 0;
+    
+    for (String snPerson : snPeople) {
+      List<String> friendsOfFriends = graph.getAdjacentVerticesOf(snPerson);
+      
+      for (int i = friendsOfFriends.size() - 1; i >= 0; i--) {
+        List<String> curFriendFriends = graph.getAdjacentVerticesOf(friendsOfFriends.get(i));
+        for (String curFriendFriend : curFriendFriends) {
+          if (!friendsOfFriends.contains(curFriendFriend)) {
+            friendsOfFriends.add(curFriendFriend);
+          }
+        }
+      }
+      
+      
+      if ((influencer.isBlank()) || (friendsOfFriends.size() > infFoF)
+          || ((friendsOfFriends.size() == infFoF) && (influencer.compareTo(snPerson) > 0))) {
+        influencer = snPerson;
+        infFoF = friendsOfFriends.size();
+      }
+    }
+    
+    return influencer;
   }
 
   /**
@@ -171,8 +284,30 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public Set<String> youMayKnow(String person) {
-    // TODO Auto-generated method stub
-    return null;
+
+    if (null == person) {
+      return new HashSet<String>();
+    }
+
+    List<String> friends = graph.getAdjacentVerticesOf(person);
+
+    if (friends.size() <= 0) {
+      return new HashSet<String>();
+    }
+
+    HashSet<String> youMayKnow = new HashSet<String>();
+
+    for (String firstDegree : friends) {
+      List<String> firstDegreeFriends = graph.getAdjacentVerticesOf(firstDegree);
+      for (String secondDegree : firstDegreeFriends) {
+        if (!friends.contains(secondDegree)) {
+          youMayKnow.add(secondDegree);
+        }
+      }
+    }
+
+    return youMayKnow;
+
   }
 
   /**
@@ -237,6 +372,4 @@ public class SocialNetwork implements SocialNetworkADT {
     // TODO Auto-generated method stub
     return null;
   }
-
-  // TODO: add graph algorithm methods from SocialNetworkADT
 }

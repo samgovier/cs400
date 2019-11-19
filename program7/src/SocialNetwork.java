@@ -23,6 +23,7 @@
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -230,10 +231,10 @@ public class SocialNetwork implements SocialNetworkADT {
   public String influencer() {
     String influencer = "";
     int infFoF = 0;
-    
+
     for (String snPerson : snPeople) {
       List<String> friendsOfFriends = graph.getAdjacentVerticesOf(snPerson);
-      
+
       for (int i = friendsOfFriends.size() - 1; i >= 0; i--) {
         List<String> curFriendFriends = graph.getAdjacentVerticesOf(friendsOfFriends.get(i));
         for (String curFriendFriend : curFriendFriends) {
@@ -242,15 +243,15 @@ public class SocialNetwork implements SocialNetworkADT {
           }
         }
       }
-      
-      
+
+
       if ((influencer.isBlank()) || (friendsOfFriends.size() > infFoF)
           || ((friendsOfFriends.size() == infFoF) && (influencer.compareTo(snPerson) > 0))) {
         influencer = snPerson;
         infFoF = friendsOfFriends.size();
       }
     }
-    
+
     return influencer;
   }
 
@@ -270,8 +271,25 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public Set<String> haveSeenMeme(String person, int days) {
-    // TODO Auto-generated method stub
-    return null;
+
+    if (null == person || days < 1 || !snPeople.contains(person)) {
+      return new HashSet<String>();
+    }
+
+    HashSet<String> haveSeenMeme = new HashSet<String>();
+    haveSeenMeme.add(person);
+
+    for (int i = 1; i < days; i++) {
+      @SuppressWarnings("unchecked")
+      HashSet<String> currentMemesters = (HashSet<String>) haveSeenMeme.clone();
+
+      for (String memester : currentMemesters) {
+        List<String> memeFriends = graph.getAdjacentVerticesOf(memester);
+        haveSeenMeme.addAll(memeFriends);
+      }
+    }
+
+    return haveSeenMeme;
   }
 
   /**
@@ -320,8 +338,23 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public boolean isFriendGroup(Set<String> people) {
-    // TODO Auto-generated method stub
-    return false;
+
+    if (people == null || people.size() < 2) {
+      return false;
+    }
+
+    for (String person : people) {
+
+      List<String> pFriends = graph.getAdjacentVerticesOf(person);
+
+      for (String pFriend : people) {
+        if (!pFriend.equals(person) && !pFriends.contains(pFriend)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   /**
@@ -333,8 +366,25 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public boolean sixDegreesOfSeparation() {
-    // TODO Auto-generated method stub
-    return false;
+    if (snPeople.size() <= 0) {
+      return true;
+    }
+
+    for (String person1 : snPeople) {
+      for (String person2 : snPeople) {
+        if (!person1.equals(person2)) {
+          if (graph.getAdjacentVerticesOf(person1).contains(person2)) {
+            continue;
+          }
+          List<String> degreesOfSeparation = socialLadder(person1, person2);
+          if (degreesOfSeparation.size() > 6 || degreesOfSeparation.size() <= 0) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
   }
 
   /**
@@ -351,8 +401,22 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public List<String> socialLadder(String person1, String person2) {
-    // TODO Auto-generated method stub
-    return null;
+
+    if ((person1 == null) || (person2 == null) || !snPeople.contains(person1)
+        || !snPeople.contains(person2)) {
+      return new ArrayList<String>();
+    }
+    
+    ArrayList<ArrayList<String>> possiblePaths = new ArrayList<ArrayList<String>>();
+    ArrayList<String> visitedPeople = new ArrayList<String>();
+    
+    List<String> friendList = graph.getAdjacentVerticesOf(person1);
+    
+    for (String friend : friendList) {
+      visitedPeople.add(friend);
+    }
+    
+
   }
 
   /**
@@ -369,7 +433,32 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public String glue(Set<String> people) {
-    // TODO Auto-generated method stub
-    return null;
+    String glue = "";
+    
+    if (people.size() < 3) {
+      return glue;
+    }
+    
+    for (String person1 : people) {
+      for (String person2 : people) {
+        if (!person1.equals(person2)) {
+          if (graph.getAdjacentVerticesOf(person1).contains(person2)) {
+            continue;
+          }
+          List<String> degreesOfSeparation = socialLadder(person1, person2);
+          
+          //if degrees NOugh
+          if (degreesOfSeparation.size() <= 0) {
+            return glue;
+          }
+        }
+      }
+    }
+    
+    
+    for (String person : people) {
+      
+    }
+    
   }
 }

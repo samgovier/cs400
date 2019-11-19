@@ -427,7 +427,7 @@ public class SocialNetwork implements SocialNetworkADT {
         ladderSize = socialLadder.size();
       }
     }
-    
+
     return socialLadder;
   }
 
@@ -446,13 +446,13 @@ public class SocialNetwork implements SocialNetworkADT {
     }
 
     int shortestPath = Integer.MAX_VALUE;
-    
+
     for (ArrayList<String> possibleLadder : possiblePaths) {
       if (possibleLadder.size() < shortestPath) {
         shortestPath = possibleLadder.size();
       }
     }
-    
+
     if (socialLadder.size() < shortestPath) {
       for (int i = 0; i < currentFriendList.size(); i++) {
         String nextFriend = currentFriendList.get(i);
@@ -477,6 +477,7 @@ public class SocialNetwork implements SocialNetworkADT {
    * @return glue of the network, without whom, the network would fall apart; null if there is no
    *         glue person
    */
+  @SuppressWarnings("unchecked")
   @Override
   public String glue(Set<String> people) {
     String glue = "";
@@ -485,25 +486,42 @@ public class SocialNetwork implements SocialNetworkADT {
       return glue;
     }
 
-    for (String person1 : people) {
-      for (String person2 : people) {
-        if (!person1.equals(person2)) {
-          if (graph.getAdjacentVerticesOf(person1).contains(person2)) {
-            continue;
-          }
-          List<String> degreesOfSeparation = socialLadder(person1, person2);
+    HashSet<String> peopleToHash = (HashSet<String>) people;
 
-          // if degrees NOugh
-          if (degreesOfSeparation.size() <= 0) {
-            return glue;
-          }
-        }
+    for (String glueTest : peopleToHash) {
+      HashSet<String> connectionTest = (HashSet<String>) peopleToHash.clone();
+      connectionTest.remove(glueTest);
+
+      String testPerson = (String) connectionTest.toArray()[0];
+
+      HashSet<String> peopleToFind = (HashSet<String>) connectionTest.clone();
+      peopleToFind.remove(testPerson);
+      List<String> testPersonFriends = graph.getAdjacentVerticesOf(testPerson);
+      findAllFriends(testPersonFriends, peopleToFind);
+
+      if (!peopleToFind.isEmpty() && (glue == "" || glue.compareTo(glueTest) > 0)) {
+        glue = glueTest;
       }
     }
 
+    return glue;
+  }
 
-    for (String person : people) {
+  private void findAllFriends(List<String> testPersonFriends, HashSet<String> peopleToFind) {
+    HashSet<String> furtherChecks = new HashSet<String>();
 
+    for (String personToFind : peopleToFind) {
+      if (testPersonFriends.contains(personToFind)) {
+        furtherChecks.add(personToFind);
+        peopleToFind.remove(personToFind);
+      }
+    }
+
+    if (!peopleToFind.isEmpty() && !furtherChecks.isEmpty()) {
+      for (String furtherCheck : furtherChecks) {
+        List<String> furtherCheckFriends = graph.getAdjacentVerticesOf(furtherCheck);
+        findAllFriends(furtherCheckFriends, peopleToFind);
+      }
     }
 
   }

@@ -407,107 +407,60 @@ public class SocialNetwork implements SocialNetworkADT {
       return new ArrayList<String>();
     }
 
-    ArrayList<ArrayList<String>> possiblePaths = new ArrayList<ArrayList<String>>();
-    ArrayList<String> socialLadder = new ArrayList<String>();
-    HashSet<String> alreadyVisited = new HashSet<String>();
-
     List<String> friendList = graph.getAdjacentVerticesOf(person1);
-    Collections.sort(friendList);
 
     if (friendList.contains(person2)) {
-      return socialLadder;
+      return new ArrayList<String>();
     }
 
-    // first level
-    for (int i = 0; i < friendList.size(); i++) {
-      String testFriend = friendList.get(i);
-      socialLadder.add(testFriend);
-      List<String> testFriendList = graph.getAdjacentVerticesOf(testFriend);
-      if (testFriendList.contains(person2)) {
-        return socialLadder;
+    ArrayList<ArrayList<String>> possiblePaths = new ArrayList<ArrayList<String>>();
+    ArrayList<String> socialLadder = new ArrayList<String>();
+    SocialLadder(possiblePaths, friendList, socialLadder, person2);
+
+    socialLadder = new ArrayList<String>();
+    int ladderSize = Integer.MAX_VALUE;
+
+    for (ArrayList<String> possibleLadder : possiblePaths) {
+      if (possibleLadder.size() < ladderSize || ((possibleLadder.size() == ladderSize)
+          && (socialLadder.get(0).compareTo(possibleLadder.get(0)) > 0))) {
+        socialLadder = possibleLadder;
+        ladderSize = socialLadder.size();
       }
-      socialLadder.remove(testFriend);
     }
-
-    // second level
-    for (int i = 0; i < friendList.size(); i++) {
-      String testFriend = friendList.get(i);
-      socialLadder.add(testFriend);
-      List<String> testFriendList = graph.getAdjacentVerticesOf(testFriend);
-      Collections.sort(testFriendList);
-      alreadyVisited.addAll(testFriendList);
-
-      for (int j = 0; j < testFriendList.size(); j++) {
-        String secondFriend = testFriendList.get(j);
-        if (!alreadyVisited.contains(secondFriend)) {
-          socialLadder.add(secondFriend);
-          List<String> secondFriendList = graph.getAdjacentVerticesOf(secondFriend);
-          if (secondFriendList.contains(person2)) {
-            return socialLadder;
-          }
-          socialLadder.remove(secondFriend);
-        }
-      }
-
-      socialLadder.remove(testFriend);
-    }
-
-    // third level
-    for (int i = 0; i < friendList.size(); i++) {
-      String testFriend = friendList.get(i);
-      socialLadder.add(testFriend);
-      List<String> testFriendList = graph.getAdjacentVerticesOf(testFriend);
-      Collections.sort(testFriendList);
-      alreadyVisited.addAll(testFriendList);
-
-      for (int j = 0; j < testFriendList.size(); j++) {
-        String secondFriend = testFriendList.get(j);
-        if (!alreadyVisited.contains(secondFriend)) {
-          socialLadder.add(secondFriend);
-          List<String> secondFriendList = graph.getAdjacentVerticesOf(secondFriend);
-          Collections.sort(secondFriendList);
-          alreadyVisited.addAll(secondFriendList);
-
-          for (int k = 0; k < secondFriendList.size(); k++) {
-            String thirdFriend = secondFriendList.get(k);
-            if (!alreadyVisited.contains(thirdFriend)) {
-              socialLadder.add(thirdFriend);
-              List<String> thirdFriendList = graph.getAdjacentVerticesOf(thirdFriend);
-              if (thirdFriendList.contains(person2)) {
-                return socialLadder;
-              }
-              socialLadder.remove(thirdFriend);
-            }
-          }
-
-          socialLadder.remove(secondFriend);
-        }
-      }
-
-      socialLadder.remove(testFriend);
-    }
+    
+    return socialLadder;
   }
 
+  @SuppressWarnings("unchecked")
   private void SocialLadder(ArrayList<ArrayList<String>> possiblePaths,
-      List<String> currentFriendList, ArrayList<String> socialLadder,
-      HashSet<String> alreadyVisited, String person2) {
-    
-    for (int i = 0; i <currentFriendList.size(); i++) {
+      List<String> currentFriendList, ArrayList<String> socialLadder, String person2) {
+
+    for (int i = 0; i < currentFriendList.size(); i++) {
       String tryFriend = currentFriendList.get(i);
-      if (!alreadyVisited.contains(tryFriend)) {
-        socialLadder.add(tryFriend);
-        List<String> tryFriendList = graph.getAdjacentVerticesOf(tryFriend);
-        if (tryFriendList.contains(person2)) {
-          possiblePaths.add((ArrayList<String>)socialLadder.clone());
-        }
-        socialLadder.remove(tryFriend);
+      socialLadder.add(tryFriend);
+      List<String> tryFriendList = graph.getAdjacentVerticesOf(tryFriend);
+      if (tryFriendList.contains(person2)) {
+        possiblePaths.add((ArrayList<String>) socialLadder.clone());
+      }
+      socialLadder.remove(tryFriend);
+    }
+
+    int shortestPath = Integer.MAX_VALUE;
+    
+    for (ArrayList<String> possibleLadder : possiblePaths) {
+      if (possibleLadder.size() < shortestPath) {
+        shortestPath = possibleLadder.size();
       }
     }
     
-    alreadyVisited.addAll(currentFriendList);
-    
-    for (int i = 0; i < currentFriendList.size(); i++) {
-      
+    if (socialLadder.size() < shortestPath) {
+      for (int i = 0; i < currentFriendList.size(); i++) {
+        String nextFriend = currentFriendList.get(i);
+        socialLadder.add(nextFriend);
+        List<String> nextFriendList = graph.getAdjacentVerticesOf(nextFriend);
+        SocialLadder(possiblePaths, nextFriendList, socialLadder, person2);
+        socialLadder.remove(nextFriend);
+      }
     }
 
   }

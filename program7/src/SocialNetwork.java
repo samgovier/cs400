@@ -406,16 +406,109 @@ public class SocialNetwork implements SocialNetworkADT {
         || !snPeople.contains(person2)) {
       return new ArrayList<String>();
     }
-    
+
     ArrayList<ArrayList<String>> possiblePaths = new ArrayList<ArrayList<String>>();
-    ArrayList<String> visitedPeople = new ArrayList<String>();
-    
+    ArrayList<String> socialLadder = new ArrayList<String>();
+    HashSet<String> alreadyVisited = new HashSet<String>();
+
     List<String> friendList = graph.getAdjacentVerticesOf(person1);
+    Collections.sort(friendList);
+
+    if (friendList.contains(person2)) {
+      return socialLadder;
+    }
+
+    // first level
+    for (int i = 0; i < friendList.size(); i++) {
+      String testFriend = friendList.get(i);
+      socialLadder.add(testFriend);
+      List<String> testFriendList = graph.getAdjacentVerticesOf(testFriend);
+      if (testFriendList.contains(person2)) {
+        return socialLadder;
+      }
+      socialLadder.remove(testFriend);
+    }
+
+    // second level
+    for (int i = 0; i < friendList.size(); i++) {
+      String testFriend = friendList.get(i);
+      socialLadder.add(testFriend);
+      List<String> testFriendList = graph.getAdjacentVerticesOf(testFriend);
+      Collections.sort(testFriendList);
+      alreadyVisited.addAll(testFriendList);
+
+      for (int j = 0; j < testFriendList.size(); j++) {
+        String secondFriend = testFriendList.get(j);
+        if (!alreadyVisited.contains(secondFriend)) {
+          socialLadder.add(secondFriend);
+          List<String> secondFriendList = graph.getAdjacentVerticesOf(secondFriend);
+          if (secondFriendList.contains(person2)) {
+            return socialLadder;
+          }
+          socialLadder.remove(secondFriend);
+        }
+      }
+
+      socialLadder.remove(testFriend);
+    }
+
+    // third level
+    for (int i = 0; i < friendList.size(); i++) {
+      String testFriend = friendList.get(i);
+      socialLadder.add(testFriend);
+      List<String> testFriendList = graph.getAdjacentVerticesOf(testFriend);
+      Collections.sort(testFriendList);
+      alreadyVisited.addAll(testFriendList);
+
+      for (int j = 0; j < testFriendList.size(); j++) {
+        String secondFriend = testFriendList.get(j);
+        if (!alreadyVisited.contains(secondFriend)) {
+          socialLadder.add(secondFriend);
+          List<String> secondFriendList = graph.getAdjacentVerticesOf(secondFriend);
+          Collections.sort(secondFriendList);
+          alreadyVisited.addAll(secondFriendList);
+
+          for (int k = 0; k < secondFriendList.size(); k++) {
+            String thirdFriend = secondFriendList.get(k);
+            if (!alreadyVisited.contains(thirdFriend)) {
+              socialLadder.add(thirdFriend);
+              List<String> thirdFriendList = graph.getAdjacentVerticesOf(thirdFriend);
+              if (thirdFriendList.contains(person2)) {
+                return socialLadder;
+              }
+              socialLadder.remove(thirdFriend);
+            }
+          }
+
+          socialLadder.remove(secondFriend);
+        }
+      }
+
+      socialLadder.remove(testFriend);
+    }
+  }
+
+  private void SocialLadder(ArrayList<ArrayList<String>> possiblePaths,
+      List<String> currentFriendList, ArrayList<String> socialLadder,
+      HashSet<String> alreadyVisited, String person2) {
     
-    for (String friend : friendList) {
-      visitedPeople.add(friend);
+    for (int i = 0; i <currentFriendList.size(); i++) {
+      String tryFriend = currentFriendList.get(i);
+      if (!alreadyVisited.contains(tryFriend)) {
+        socialLadder.add(tryFriend);
+        List<String> tryFriendList = graph.getAdjacentVerticesOf(tryFriend);
+        if (tryFriendList.contains(person2)) {
+          possiblePaths.add((ArrayList<String>)socialLadder.clone());
+        }
+        socialLadder.remove(tryFriend);
+      }
     }
     
+    alreadyVisited.addAll(currentFriendList);
+    
+    for (int i = 0; i < currentFriendList.size(); i++) {
+      
+    }
 
   }
 
@@ -434,11 +527,11 @@ public class SocialNetwork implements SocialNetworkADT {
   @Override
   public String glue(Set<String> people) {
     String glue = "";
-    
+
     if (people.size() < 3) {
       return glue;
     }
-    
+
     for (String person1 : people) {
       for (String person2 : people) {
         if (!person1.equals(person2)) {
@@ -446,19 +539,19 @@ public class SocialNetwork implements SocialNetworkADT {
             continue;
           }
           List<String> degreesOfSeparation = socialLadder(person1, person2);
-          
-          //if degrees NOugh
+
+          // if degrees NOugh
           if (degreesOfSeparation.size() <= 0) {
             return glue;
           }
         }
       }
     }
-    
-    
+
+
     for (String person : people) {
-      
+
     }
-    
+
   }
 }

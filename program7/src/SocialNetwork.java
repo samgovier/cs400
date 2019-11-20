@@ -223,7 +223,7 @@ public class SocialNetwork implements SocialNetworkADT {
     // social butterfly, make them the SB
     for (String snPerson : snPeople) {
       List<String> friends = graph.getAdjacentVerticesOf(snPerson);
-      if ((socialButterfly.isBlank()) || (friends.size() > sbFriends)
+      if ((socialButterfly.equals("")) || (friends.size() > sbFriends)
           || ((friends.size() == sbFriends) && (socialButterfly.compareTo(snPerson) > 0))) {
         socialButterfly = snPerson;
         sbFriends = friends.size();
@@ -265,7 +265,7 @@ public class SocialNetwork implements SocialNetworkADT {
 
       // if the influencer is blank, they have more, or the same but higher alphabetically, set them
       // to the influencer
-      if ((influencer.isBlank()) || (friendsOfFriends.size() > infFoF)
+      if ((influencer.equals("")) || (friendsOfFriends.size() > infFoF)
           || ((friendsOfFriends.size() == infFoF) && (influencer.compareTo(snPerson) > 0))) {
         influencer = snPerson;
         infFoF = friendsOfFriends.size();

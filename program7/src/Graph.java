@@ -157,7 +157,7 @@ public class Graph<T> implements GraphADT<T> {
     if (vertex1.equals(vertex2)) {
       return;
     }
-    
+
     // if one of the vertices does not exist, return without modifying
     if (!allVertices.contains(vertex1) || !allVertices.contains(vertex2)) {
       return;

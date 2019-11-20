@@ -41,8 +41,8 @@ import org.junit.runners.MethodSorters;
 public class SocialNetworkTest {
   private SocialNetwork network;
 
-//  @Rule
-//  public Timeout globalTimeout = new Timeout(2000, TimeUnit.MILLISECONDS);
+  @Rule
+  public Timeout globalTimeout = new Timeout(2000, TimeUnit.MILLISECONDS);
 
   @Before
   public void setUp() throws Exception {
@@ -53,6 +53,9 @@ public class SocialNetworkTest {
     this.network = null;
   }
 
+  /**
+   * Test Social Butterfly function
+   */
   @Test
   public final void test00_socialButterflyValid() {
     try {
@@ -73,6 +76,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test Social Butterfly on an empty network
+   */
   @Test
   public final void test01_socialButterflyEmptyNetwork() {
     try {
@@ -85,6 +91,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test average friends per person function
+   */
   @Test
   public final void test02_avgFriendsValid() {
     try {
@@ -102,6 +111,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test average friends on an empty network
+   */
   @Test
   public final void test03_avgFriendsEmptyNetwork() {
     try {
@@ -114,6 +126,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test mutual friends function
+   */
   @Test
   public final void test04_mutFriendsValid() {
     try {
@@ -141,6 +156,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test mutual friends on an empty network
+   */
   @Test
   public final void test05_mutFriendsEmpty() {
     try {
@@ -154,6 +172,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test influencer function
+   */
   @Test
   public final void test06_influencer() {
     try {
@@ -169,6 +190,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test influencer on an empty network
+   */
   @Test
   public final void test07_influencerempty() {
     try {
@@ -180,6 +204,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test haveSeenMeme function
+   */
   @Test
   public final void test08_haveSeenMeme() {
     try {
@@ -207,6 +234,9 @@ public class SocialNetworkTest {
     }
   }
 
+  /**
+   * Test haveSeenMeme function on an empty network
+   */
   @Test
   public final void test09_haveSeenMemeEmpty() {
     try {
@@ -218,7 +248,10 @@ public class SocialNetworkTest {
       fail("test09: failed - unexpected exception occurred");
     }
   }
-  
+
+  /**
+   * Test youMayKnow function
+   */
   @Test
   public final void test10_youMayKnow() {
     try {
@@ -228,20 +261,19 @@ public class SocialNetworkTest {
               + network.youMayKnow("Malika").toArray()[0] + "\"",
           "Lilly", network.youMayKnow("Malika").toArray()[0]);
       this.network = new SocialNetwork("social-network-md.json");
-      assertEquals(
-          "test10: failed - expected: \"2\" returned: \""
-              + network.youMayKnow("Edward").size() + "\"",
-          2, network.youMayKnow("Edward").size());
+      assertEquals("test10: failed - expected: \"2\" returned: \""
+          + network.youMayKnow("Edward").size() + "\"", 2, network.youMayKnow("Edward").size());
       this.network = new SocialNetwork("social-network-lg.json");
-      assertEquals(
-          "test10: failed - expected: \"2\" returned: \""
-              + network.youMayKnow("Stanley").size() + "\"",
-          2, network.youMayKnow("Stanley").size());
+      assertEquals("test10: failed - expected: \"2\" returned: \""
+          + network.youMayKnow("Stanley").size() + "\"", 2, network.youMayKnow("Stanley").size());
     } catch (Exception e) {
       fail("test10: failed - unexpected exception occurred");
     }
   }
-  
+
+  /**
+   * Test isFriendGroup function
+   */
   @Test
   public final void test11_isFriendGroup() {
     try {
@@ -249,91 +281,86 @@ public class SocialNetworkTest {
       HashSet<String> friendGroup = new HashSet<String>();
       friendGroup.add("Malika");
       friendGroup.add("Scott");
-      assertEquals(
-          "test11: failed - expected: \"true\" returned: \""
-              + network.isFriendGroup(friendGroup)+ "\"",
-          true, network.isFriendGroup(friendGroup));
+      assertEquals("test11: failed - expected: \"true\" returned: \""
+          + network.isFriendGroup(friendGroup) + "\"", true, network.isFriendGroup(friendGroup));
       friendGroup.add("Lilly");
-      assertEquals(
-          "test11: failed - expected: \"false\" returned: \""
-              + network.isFriendGroup(friendGroup)+ "\"",
-          false, network.isFriendGroup(friendGroup));
+      assertEquals("test11: failed - expected: \"false\" returned: \""
+          + network.isFriendGroup(friendGroup) + "\"", false, network.isFriendGroup(friendGroup));
       this.network = new SocialNetwork("social-network-md.json");
       friendGroup = new HashSet<String>();
       friendGroup.add("Mel");
       friendGroup.add("Daniel");
       friendGroup.add("Riley");
-      assertEquals(
-          "test11: failed - expected: \"false\" returned: \""
-              + network.isFriendGroup(friendGroup)+ "\"",
-          false, network.isFriendGroup(friendGroup));
+      assertEquals("test11: failed - expected: \"false\" returned: \""
+          + network.isFriendGroup(friendGroup) + "\"", false, network.isFriendGroup(friendGroup));
       friendGroup = new HashSet<String>();
       friendGroup.add("Addison");
       friendGroup.add("Edward");
       friendGroup.add("Bailey");
       friendGroup.add("Alex");
-      assertEquals(
-          "test11: failed - expected: \"true\" returned: \""
-              + network.isFriendGroup(friendGroup)+ "\"",
-          true, network.isFriendGroup(friendGroup));
+      assertEquals("test11: failed - expected: \"true\" returned: \""
+          + network.isFriendGroup(friendGroup) + "\"", true, network.isFriendGroup(friendGroup));
     } catch (Exception e) {
       fail("test11: failed - unexpected exception occurred");
     }
   }
-  
+
+  /**
+   * Test six degrees of separation function
+   */
   @Test
   public final void test12_sixDegreesOfSeparation() {
     try {
       this.network = new SocialNetwork("social-network-sm.json");
-      assertEquals(
-          "test12: failed - expected: \"true\" returned: \""
-              + network.sixDegreesOfSeparation()+ "\"",
-          true, network.sixDegreesOfSeparation());
+      assertEquals("test12: failed - expected: \"true\" returned: \""
+          + network.sixDegreesOfSeparation() + "\"", true, network.sixDegreesOfSeparation());
       this.network = new SocialNetwork("social-network-md.json");
-      assertEquals(
-          "test12: failed - expected: \"true\" returned: \""
-              + network.sixDegreesOfSeparation()+ "\"",
-          true, network.sixDegreesOfSeparation());
+      assertEquals("test12: failed - expected: \"true\" returned: \""
+          + network.sixDegreesOfSeparation() + "\"", true, network.sixDegreesOfSeparation());
       this.network = new SocialNetwork("social-network-lg.json");
-      assertEquals(
-          "test12: failed - expected: \"false\" returned: \""
-              + network.sixDegreesOfSeparation()+ "\"",
-          false, network.sixDegreesOfSeparation());
+      assertEquals("test12: failed - expected: \"false\" returned: \""
+          + network.sixDegreesOfSeparation() + "\"", false, network.sixDegreesOfSeparation());
     } catch (Exception e) {
       fail("test12: failed - unexpected exception occurred");
     }
   }
-  
+
+  /**
+   * Test socialLadder function
+   */
   @Test
   public final void test13_socialLadder() {
     try {
       this.network = new SocialNetwork("social-network-sm.json");
       assertEquals(
           "test13: failed - expected: \"1\" returned: \""
-              + network.socialLadder("Lilly","Lilly").size() + "\"",
-          1, network.socialLadder("Lilly","Lilly").size());
+              + network.socialLadder("Lilly", "Lilly").size() + "\"",
+          1, network.socialLadder("Lilly", "Lilly").size());
       assertEquals(
           "test13: failed - expected: \"2\" returned: \""
-              + network.socialLadder("Lilly","Scott").size() + "\"",
-          2, network.socialLadder("Lilly","Scott").size());
+              + network.socialLadder("Lilly", "Scott").size() + "\"",
+          2, network.socialLadder("Lilly", "Scott").size());
       assertEquals(
           "test13: failed - expected: \"4\" returned: \""
-              + network.socialLadder("Aaron","Malika").size() + "\"",
-          4, network.socialLadder("Aaron","Malika").size());
+              + network.socialLadder("Aaron", "Malika").size() + "\"",
+          4, network.socialLadder("Aaron", "Malika").size());
       this.network = new SocialNetwork("social-network-md.json");
       assertEquals(
           "test13: failed - expected: \"3\" returned: \""
-              + network.socialLadder("Edward","Jess").size() + "\"",
-          3, network.socialLadder("Edward","Jess").size());
+              + network.socialLadder("Edward", "Jess").size() + "\"",
+          3, network.socialLadder("Edward", "Jess").size());
       assertEquals(
           "test13: failed - expected: \"6\" returned: \""
-              + network.socialLadder("Mel","Daniel").size() + "\"",
-          6, network.socialLadder("Mel","Daniel").size());
+              + network.socialLadder("Mel", "Daniel").size() + "\"",
+          6, network.socialLadder("Mel", "Daniel").size());
     } catch (Exception e) {
       fail("test13: failed - unexpected exception occurred");
     }
   }
-  
+
+  /**
+   * Test glue function
+   */
   @Test
   public final void test14_glue() {
     try {
@@ -342,13 +369,11 @@ public class SocialNetworkTest {
       friendGroup.add("Malika");
       friendGroup.add("Scott");
       assertEquals(
-          "test14: failed - expected: \"\" returned: \""
-              + network.glue(friendGroup)+ "\"",
-          "", network.glue(friendGroup));
+          "test14: failed - expected: \"\" returned: \"" + network.glue(friendGroup) + "\"", "",
+          network.glue(friendGroup));
       friendGroup.add("Lilly");
       assertEquals(
-          "test14: failed - expected: \"Scott\" returned: \""
-              + network.glue(friendGroup)+ "\"",
+          "test14: failed - expected: \"Scott\" returned: \"" + network.glue(friendGroup) + "\"",
           "Scott", network.glue(friendGroup));
       this.network = new SocialNetwork("social-network-md.json");
       friendGroup = new HashSet<String>();
@@ -356,8 +381,7 @@ public class SocialNetworkTest {
       friendGroup.add("Daniel");
       friendGroup.add("Riley");
       assertEquals(
-          "test14: failed - expected: \"Daniel\" returned: \""
-              + network.glue(friendGroup)+ "\"",
+          "test14: failed - expected: \"Daniel\" returned: \"" + network.glue(friendGroup) + "\"",
           "Daniel", network.glue(friendGroup));
       friendGroup = new HashSet<String>();
       friendGroup.add("Addison");
@@ -365,34 +389,32 @@ public class SocialNetworkTest {
       friendGroup.add("Bailey");
       friendGroup.add("Alex");
       assertEquals(
-          "test14: failed - expected: \"\" returned: \""
-              + network.glue(friendGroup)+ "\"",
-          "", network.glue(friendGroup));
+          "test14: failed - expected: \"\" returned: \"" + network.glue(friendGroup) + "\"", "",
+          network.glue(friendGroup));
     } catch (Exception e) {
       fail("test11: failed - unexpected exception occurred: " + e.getMessage());
     }
   }
 
-
+  /**
+   * One last empty social network test for remaning functions
+   */
   @Test
   public final void test15_finalEmptyTest() {
     try {
       this.network = new SocialNetwork("social-network-empty.json");
-      assertEquals(
-          "test15: failed - expected: \"true\" returned: \""
-              + network.sixDegreesOfSeparation()+ "\"",
-          true, network.sixDegreesOfSeparation());
+      assertEquals("test15: failed - expected: \"true\" returned: \""
+          + network.sixDegreesOfSeparation() + "\"", true, network.sixDegreesOfSeparation());
       assertEquals(
           "test15: failed - expected: \"0\" returned: \""
-              + network.socialLadder("Lilly","Lilly").size() + "\"",
-          0, network.socialLadder("Lilly","Lilly").size());
+              + network.socialLadder("Lilly", "Lilly").size() + "\"",
+          0, network.socialLadder("Lilly", "Lilly").size());
       HashSet<String> friendGroup = new HashSet<String>();
       friendGroup.add("Malika");
       friendGroup.add("Scott");
       assertEquals(
-          "test15: failed - expected: \"\" returned: \""
-              + network.glue(friendGroup)+ "\"",
-          "", network.glue(friendGroup));
+          "test15: failed - expected: \"\" returned: \"" + network.glue(friendGroup) + "\"", "",
+          network.glue(friendGroup));
     } catch (Exception e) {
       fail("test15: failed - unexpected exception occurred");
     }

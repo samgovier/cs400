@@ -1,0 +1,40 @@
+Topological Ordering Algorithm
+Let N be the number of vertices.  Mark all vertices as unvisited. 
+Make a Stack.   Make an array of length N.  
+
+for each vertex V with no predecessors 			// in alphanumeric order 
+	mark V as visited
+push V onto the stack
+
+decrement N 		//  N is now the index of the last element of the array.
+while Stack is not empty
+	current = stack.peek();
+	if all successors of current are visited
+		pop current off the stack…..store it in the array at index N
+		decrement N
+	else
+		select an unvisited successor U of current  // in alphanumeric order 
+		mark U as visited
+		push U onto the stack
+
+Dijkstra's Algorithm
+
+for each vertex V
+	set V's visited to false, weight to "infinity" (Integer.MAX_VALUE), predecessor to null
+
+set start vertex’s total weight to 0
+create new Priority Queue pq
+pq.insert( [start vertex total weight,start vertex] )
+
+while !pq.isEmpty()
+[C’s total weight,C] = pq.removeMin()
+	mark C as visited
+
+	for each unvisited successor S adjacent to C
+		if S's total weight can be reduced
+			S's total weight = C's total weight + edge weight from C to S
+			update S's predecessor to C
+if S already in pq 
+update S's total weight in the PQ
+			else 
+pq.insert( [S’s total weight,S] )

@@ -63,8 +63,13 @@ public class SocialNetwork implements SocialNetworkADT {
       // this.graph.getAdjacentVerticesOf(person); Collections.sort(friends);
       // System.out.println(person + "'s friends: " + friends); }
 
-    } catch (Exception e) {
+    } catch (FileNotFoundException fnfEx) {
+      System.out.println("The specified file wasn't found: " + filename);
+      System.out.println(fnfEx.getMessage());
+    }
+    catch (Exception e) {
       System.out.println("Error: An unexpected exception occurred");
+      System.out.println(e.getMessage());
     }
   }
 
@@ -74,7 +79,7 @@ public class SocialNetwork implements SocialNetworkADT {
    * @return array of Person objects which stores information about a single person
    * @throws Exception like FileNotFound, JsonParseException
    */
-  private static Person[] parseJSON() throws Exception {
+  private static Person[] parseJSON() throws FileNotFoundException, Exception {
 
     // array storing the Person objects created from the JSON file to be loaded later in the graph
     Person[] people = null;
@@ -318,7 +323,7 @@ public class SocialNetwork implements SocialNetworkADT {
     for (String firstDegree : friends) {
       List<String> firstDegreeFriends = graph.getAdjacentVerticesOf(firstDegree);
       for (String secondDegree : firstDegreeFriends) {
-        if (!friends.contains(secondDegree)) {
+        if (!friends.contains(secondDegree) && !secondDegree.equals(person)) {
           youMayKnow.add(secondDegree);
         }
       }
@@ -407,14 +412,22 @@ public class SocialNetwork implements SocialNetworkADT {
       return new ArrayList<String>();
     }
 
+    ArrayList<String> socialLadder = new ArrayList<String>();
+    
+    if (person1.equals(person2)) {
+      socialLadder.add(person1);
+      return socialLadder;
+    }
+    
     List<String> friendList = graph.getAdjacentVerticesOf(person1);
 
     if (friendList.contains(person2)) {
-      return new ArrayList<String>();
+      socialLadder.add(person1);
+      socialLadder.add(person2);
+      return socialLadder;
     }
 
     ArrayList<ArrayList<String>> possiblePaths = new ArrayList<ArrayList<String>>();
-    ArrayList<String> socialLadder = new ArrayList<String>();
     SocialLadder(possiblePaths, friendList, socialLadder, person2);
 
     socialLadder = new ArrayList<String>();
@@ -428,6 +441,8 @@ public class SocialNetwork implements SocialNetworkADT {
       }
     }
 
+    socialLadder.add(0, person1);
+    socialLadder.add(person2);
     return socialLadder;
   }
 
@@ -458,6 +473,9 @@ public class SocialNetwork implements SocialNetworkADT {
         String nextFriend = currentFriendList.get(i);
         socialLadder.add(nextFriend);
         List<String> nextFriendList = graph.getAdjacentVerticesOf(nextFriend);
+        
+        // remove any existing socialLadder people to prevent infinite loops
+        nextFriendList.removeAll(socialLadder);
         SocialLadder(possiblePaths, nextFriendList, socialLadder, person2);
         socialLadder.remove(nextFriend);
       }
@@ -474,8 +492,7 @@ public class SocialNetwork implements SocialNetworkADT {
    * already disconnected, return the empty string "".
    * 
    * @param people
-   * @return glue of the network, without whom, the network would fall apart; null if there is no
-   *         glue person
+   * @return glue of the network, without whom, the network would fall apart
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -513,9 +530,11 @@ public class SocialNetwork implements SocialNetworkADT {
     for (String personToFind : peopleToFind) {
       if (testPersonFriends.contains(personToFind)) {
         furtherChecks.add(personToFind);
-        peopleToFind.remove(personToFind);
       }
     }
+    
+    // to prevent null in for-each loop
+    peopleToFind.removeAll(furtherChecks);
 
     if (!peopleToFind.isEmpty() && !furtherChecks.isEmpty()) {
       for (String furtherCheck : furtherChecks) {

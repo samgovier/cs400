@@ -26,8 +26,6 @@ public class Main extends Application {
       TextField textField1 = new TextField();
       PasswordField pf1 = new PasswordField();
       
-      ImageView iv1 = new ImageView(new Image("example.jpg"));
-      iv1.setPreserveRatio(true);
       
       ComboBox<String> combo1 = new ComboBox();
       combo1.getItems().addAll("option1","option2");
@@ -43,7 +41,7 @@ public class Main extends Application {
       });
 
       VBox vBox1 = new VBox(label1, textArea1, labelClickCount);
-      vBox1.getChildren().addAll(iv1, hbox1);
+      vBox1.getChildren().addAll(hbox1);
 
       root.setCenter(vBox1);
       Scene scene = new Scene(root, 400, 400);

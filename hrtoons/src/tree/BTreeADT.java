@@ -6,6 +6,8 @@ public interface BTreeADT<K extends Comparable<K>, V> {
 
   public void insert(K key, V value);
   
+  public boolean remove(K key);
+  
   public V getValue(K key);
   
   public boolean contains(K key);

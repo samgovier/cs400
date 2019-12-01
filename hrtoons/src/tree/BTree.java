@@ -42,6 +42,20 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
 
       return 1 + maxHeight;
     }
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<K> getAllKeys() {
+      if (this.childrenList.size() == 0) {
+        return keyList;
+      }
+      
+      ArrayList<K> childKeys = (ArrayList<K>)keyList.clone();
+      for (BNode child : this.childrenList) {
+        childKeys.addAll(child.getAllKeys());
+      }
+      
+      return childKeys;
+    }
   }
 
   private BNode root;
@@ -53,12 +67,45 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   @Override
-  public void insert(K key, V value) {
+  public void insert(K key, V value) throws DuplicateKeyException {
     // TODO Auto-generated method stub
 
     // MAKE SURE TO SORT WHEN ADDING/SUBTRACTING
     // INCREMENT SIZE
 
+    insert(key, value, root);
+  }
+
+  private void insert(K key, V value, BNode current) throws DuplicateKeyException {
+    
+    if (current.keyList.contains(key)) {
+      throw new DuplicateKeyException("Key already exists in Tree.");
+    }
+
+    if (current.childrenList.size() == 2) {
+      K singleKey = current.keyList.get(0);
+      if (key.compareTo(singleKey) > 0) {
+        insert(key, value, current.childrenList.get(1));
+      }
+      insert(key, value, current.childrenList.get(0));
+    }
+
+    if (current.childrenList.size() == 3) {
+      if (key.compareTo(current.keyList.get(0)) < 0) {
+        insert(key, value, current.childrenList.get(0));
+      }
+      if (key.compareTo(current.keyList.get(1)) > 0) {
+        insert(key, value, current.childrenList.get(2));
+      }
+
+      insert(key, value, current.childrenList.get(1));
+    }
+    
+    // if we've reached this point, we're in a leaf. Insert
+    current.keyList.add(key);
+    current.valueMap.put(key, value);
+    
+    // REBALANCE
   }
 
   @Override
@@ -71,15 +118,15 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   @Override
-  public V getValue(K key) {
+  public V getValue(K key) throws KeyNotFoundException {
 
     return getValue(key, root);
   }
 
-  private V getValue(K key, BNode current) {
+  private V getValue(K key, BNode current) throws KeyNotFoundException {
 
     if (current.keyList.contains(key)) {
-      return true;
+      return current.valueMap.get(key);
     }
 
     if (current.childrenList.size() == 2) {
@@ -154,9 +201,8 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   @Override
-  public ArrayList<V> getAllKeys() {
-    // TODO Auto-generated method stub
-    return null;
+  public ArrayList<K> getAllKeys() {
+    return root.getAllKeys();
   }
 
 }

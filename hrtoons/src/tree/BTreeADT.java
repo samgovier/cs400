@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public interface BTreeADT<K extends Comparable<K>, V> {
 
-  public void insert(K key, V value);
+  public void insert(K key, V value) throws DuplicateKeyException;
   
   public boolean remove(K key);
   
-  public V getValue(K key);
+  public V getValue(K key) throws KeyNotFoundException;
   
   public boolean contains(K key);
   
@@ -16,5 +16,5 @@ public interface BTreeADT<K extends Comparable<K>, V> {
   
   public int size();
   
-  public ArrayList<V> getAllKeys();
+  public ArrayList<K> getAllKeys();
 }

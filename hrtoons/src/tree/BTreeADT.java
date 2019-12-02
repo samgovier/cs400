@@ -17,4 +17,6 @@ public interface BTreeADT<K extends Comparable<K>, V> {
   public int size();
   
   public ArrayList<K> getAllKeys();
+
+  public void printTreeSideways();
 }

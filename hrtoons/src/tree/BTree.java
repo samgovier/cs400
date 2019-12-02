@@ -66,6 +66,10 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     size = 0;
   }
 
+  private BNode ReBalance() {
+
+  }
+
   @Override
   public void insert(K key, V value) throws DuplicateKeyException {
     // TODO Auto-generated method stub

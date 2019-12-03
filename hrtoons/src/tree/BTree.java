@@ -77,10 +77,10 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     // MAKE SURE TO SORT WHEN ADDING/SUBTRACTING
     // INCREMENT SIZE
 
-    insert(key, value, root);
+    root = insert(key, value, root);
   }
 
-  private void insert(K key, V value, BNode current) throws DuplicateKeyException {
+  private BNode insert(K key, V value, BNode current) throws DuplicateKeyException {
     
     if (current.keyList.contains(key)) {
       throw new DuplicateKeyException("Key already exists in Tree.");
@@ -89,20 +89,20 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     if (current.childrenList.size() == 2) {
       K singleKey = current.keyList.get(0);
       if (key.compareTo(singleKey) > 0) {
-        insert(key, value, current.childrenList.get(1));
+        current = insert(key, value, current.childrenList.get(1));
       }
-      insert(key, value, current.childrenList.get(0));
+      current = insert(key, value, current.childrenList.get(0));
     }
 
     if (current.childrenList.size() == 3) {
       if (key.compareTo(current.keyList.get(0)) < 0) {
-        insert(key, value, current.childrenList.get(0));
+        current = insert(key, value, current.childrenList.get(0));
       }
       if (key.compareTo(current.keyList.get(1)) > 0) {
-        insert(key, value, current.childrenList.get(2));
+        current = insert(key, value, current.childrenList.get(2));
       }
 
-      insert(key, value, current.childrenList.get(1));
+      current = insert(key, value, current.childrenList.get(1));
     }
     
     // if we've reached this point, we're in a leaf. Insert

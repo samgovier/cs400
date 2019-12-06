@@ -121,6 +121,15 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
         current.keyList.add(keyToMove);
         current.valueMap.put(keyToMove, valToMove);
         Collections.sort(current.keyList);
+        
+        K keyToSplit = child.keyList.get(1);
+        V valToSplit = child.valueMap.get(keyToSplit);
+        child.keyList.remove(1);
+        child.valueMap.remove(keyToSplit);
+        BNode newChild = new BNode();
+        newChild.keyList.add(keyToSplit);
+        newChild.valueMap.put(keyToSplit, valToSplit);
+        current.childrenList.add(newChild);
       }
     }
   }

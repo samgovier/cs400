@@ -1,6 +1,7 @@
 package tree;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
@@ -66,16 +67,8 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     size = 0;
   }
 
-  private BNode ReBalance() {
-
-  }
-
   @Override
   public void insert(K key, V value) throws DuplicateKeyException {
-    // TODO Auto-generated method stub
-
-    // MAKE SURE TO SORT WHEN ADDING/SUBTRACTING
-    // INCREMENT SIZE
 
     root = insert(key, value, root);
   }
@@ -91,25 +84,45 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
       if (key.compareTo(singleKey) > 0) {
         current = insert(key, value, current.childrenList.get(1));
       }
-      current = insert(key, value, current.childrenList.get(0));
+      else {
+        current = insert(key, value, current.childrenList.get(0));
+      }
     }
 
-    if (current.childrenList.size() == 3) {
+    else if (current.childrenList.size() == 3) {
       if (key.compareTo(current.keyList.get(0)) < 0) {
         current = insert(key, value, current.childrenList.get(0));
       }
-      if (key.compareTo(current.keyList.get(1)) > 0) {
+      else if (key.compareTo(current.keyList.get(1)) > 0) {
         current = insert(key, value, current.childrenList.get(2));
       }
-
-      current = insert(key, value, current.childrenList.get(1));
+      else {
+        current = insert(key, value, current.childrenList.get(1));
+      }
+    }
+    else {
+      // if we've reached this point, we're in a leaf. Insert
+      current.keyList.add(key);
+      Collections.sort(current.keyList);
+      current.valueMap.put(key, value);
+      size++;
     }
     
-    // if we've reached this point, we're in a leaf. Insert
-    current.keyList.add(key);
-    current.valueMap.put(key, value);
-    
-    // REBALANCE
+    return current;
+  }
+  
+  private BNode ReBalanceAdd(BNode current) {
+    for (BNode child : current.childrenList) {
+      if (child.keyList.size() > 2) {
+        K keyToMove = child.keyList.get(1);
+        V valToMove = child.valueMap.get(keyToMove);
+        child.keyList.remove(1);
+        child.valueMap.remove(keyToMove);
+        current.keyList.add(keyToMove);
+        current.valueMap.put(keyToMove, valToMove);
+        Collections.sort(current.keyList);
+      }
+    }
   }
 
   @Override

@@ -151,30 +151,7 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   private BNode reBalanceInsert(BNode current) {
     for (BNode child : current.childrenList) {
       if (child.keyList.size() > 2) {
-        // get keys and values to move
-        K keyToMove = child.keyList.remove(1);
-        V valToMove = child.valueMap.remove(keyToMove);
-
-        // add them to parent
-        current.keyList.add(keyToMove);
-        current.valueMap.put(keyToMove, valToMove);
-        Collections.sort(current.keyList);
-
-        // split keys and values
-        K keyToSplit = child.keyList.remove(1);
-        V valToSplit = child.valueMap.remove(keyToSplit);
-        BNode newChild = new BNode();
-        newChild.keyList.add(keyToSplit);
-        newChild.valueMap.put(keyToSplit, valToSplit);
-
-        // if there are children, include them in split: move to new child
-        if (child.childrenList.size() > 0) {
-          newChild.childrenList.add(child.childrenList.remove(2));
-          newChild.childrenList.add(child.childrenList.remove(3));
-        }
-
-        int childIndex = current.childrenList.indexOf(child);
-        current.childrenList.add(childIndex + 1, newChild);
+        split(current, child);
       }
     }
 
@@ -193,13 +170,13 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   private BNode remove(K key, BNode current) throws KeyNotFoundException {
-    
+
     // if we successfully remove, the key is here. Finish remove and start reBalance
     if (current.keyList.remove(key)) {
       current.valueMap.remove(key);
       current = reBalanceRemove(current);
     }
-    
+
     else if (current.childrenList.size() == 2) {
       K singleKey = current.keyList.get(0);
       if (key.compareTo(singleKey) > 0) {
@@ -234,9 +211,112 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
 
   private BNode reBalanceRemove(BNode current) {
     // TODO https://pages.cs.wisc.edu/~deppeler/cs400/readings/23Trees/#delete
-    
-    
+    // TODO https://www.cs.usfca.edu/~galles/visualization/BTree.html
+    // TODO https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html
+    // TOOD https://www.geeksforgeeks.org/delete-operation-in-b-tree/
+    if (current.childrenList.size() == 3) {
+      for (int i = current.childrenList.size() - 1; i >= 0; i--) {
+        if (current.childrenList.get(i).keyList.size() == 0) {
+          current.childrenList.remove(i);
+        }
+      }
+      if (current.childrenList.size() != 3) {
+        ArrayList<K> curKeys = (ArrayList<K>) current.keyList.clone();
+        for (BNode child : current.childrenList) {
+          curKeys.addAll(child.keyList);
+        }
+        Collections.sort(curKeys);
+
+        if (current.keyList.contains(curKeys.get(curKeys.size() - 1))) {
+          BNode toAddNode = current.childrenList.get(1);
+          K keyToAdd = current.keyList.remove(1);
+          toAddNode.keyList.add(keyToAdd);
+          Collections.sort(toAddNode.keyList);
+          toAddNode.valueMap.put(keyToAdd, current.valueMap.remove(keyToAdd));
+          if (toAddNode.keyList.size() > 2) {
+            split(current, toAddNode);
+          }
+        }
+
+        else {
+          BNode toAddNode = current.childrenList.get(0);
+          K keyToAdd = current.keyList.remove(0);
+          toAddNode.keyList.add(keyToAdd);
+          Collections.sort(toAddNode.keyList);
+          toAddNode.valueMap.put(keyToAdd, current.valueMap.remove(keyToAdd));
+          if (toAddNode.keyList.size() > 2) {
+            split(current, toAddNode);
+          }
+        }
+      }
+    } else if (current.childrenList.size() == 2) {
+      for (int i = current.childrenList.size() - 1; i >= 0; i--) {
+        if (current.childrenList.get(i).keyList.size() == 0) {
+          current.childrenList.remove(i);
+        }
+      }
+      
+      if (current.childrenList.size() != 2) {
+        BNode currentChild = current.childrenList.get(0);
+        if (currentChild.keyList.size() == 2) {
+          K keyToMove = current.keyList.remove(0);
+          V valToMove = current.valueMap.remove(keyToMove);
+          currentChild.keyList.add(keyToMove);
+          currentChild.valueMap.put(keyToMove, valToMove);
+          Collections.sort(currentChild.keyList);
+          split(current, currentChild);
+        }
+        // else leave it alone, we'll take care of it on the next stop up recursion
+      }
+    } else {
+      for (BNode fixerChild : current.childrenList) {
+
+        if ((fixerChild.keyList.size() == 1) && (fixerChild.childrenList.size() == 1)) {
+          K keyToMove = fixerChild.keyList.remove(0);
+          V valToMove = fixerChild.valueMap.remove(keyToMove);
+          BNode fixerChildChild = fixerChild.childrenList.get(0);
+          fixerChildChild.keyList.add(keyToMove);
+          fixerChildChild.valueMap.put(keyToMove, valToMove);
+          Collections.sort(fixerChildChild.keyList);
+          
+          for (BNode theftChild : current.childrenList) {
+            if (theftChild.keyList.size() > 1) {
+              theftChild
+              break;
+            }
+          }
+          
+        }
+      }
+    }
     return current;
+  }
+
+  private void split(BNode current, BNode toAddNode) {
+    // get keys and values to move
+    K keyToMove = toAddNode.keyList.remove(1);
+    V valToMove = toAddNode.valueMap.remove(keyToMove);
+
+    // add them to parent
+    current.keyList.add(keyToMove);
+    current.valueMap.put(keyToMove, valToMove);
+    Collections.sort(current.keyList);
+
+    // split keys and values
+    K keyToSplit = toAddNode.keyList.remove(1);
+    V valToSplit = toAddNode.valueMap.remove(keyToSplit);
+    BNode newChild = new BNode();
+    newChild.keyList.add(keyToSplit);
+    newChild.valueMap.put(keyToSplit, valToSplit);
+
+    // if there are children, include them in split: move to new child
+    if (toAddNode.childrenList.size() > 0) {
+      newChild.childrenList.add(toAddNode.childrenList.remove(2));
+      newChild.childrenList.add(toAddNode.childrenList.remove(3));
+    }
+
+    int childIndex = current.childrenList.indexOf(toAddNode);
+    current.childrenList.add(childIndex + 1, newChild);
   }
 
   @Override

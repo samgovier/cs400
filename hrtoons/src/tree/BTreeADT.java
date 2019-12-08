@@ -6,7 +6,7 @@ public interface BTreeADT<K extends Comparable<K>, V> {
 
   public void insert(K key, V value) throws DuplicateKeyException;
   
-  public boolean remove(K key);
+  public void remove(K key) throws KeyNotFoundException;
   
   public V getValue(K key) throws KeyNotFoundException;
   
@@ -17,6 +17,4 @@ public interface BTreeADT<K extends Comparable<K>, V> {
   public int size();
   
   public ArrayList<K> getAllKeys();
-
-  public void printTreeSideways();
 }

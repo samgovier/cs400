@@ -213,7 +213,7 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     // TODO https://pages.cs.wisc.edu/~deppeler/cs400/readings/23Trees/#delete
     // TODO https://www.cs.usfca.edu/~galles/visualization/BTree.html
     // TODO https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html
-    // TOOD https://www.geeksforgeeks.org/delete-operation-in-b-tree/
+    // TODO https://www.geeksforgeeks.org/delete-operation-in-b-tree/
     if (current.childrenList.size() == 3) {
       for (int i = current.childrenList.size() - 1; i >= 0; i--) {
         if (current.childrenList.get(i).keyList.size() == 0) {
@@ -255,7 +255,7 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
           current.childrenList.remove(i);
         }
       }
-      
+
       if (current.childrenList.size() != 2) {
         BNode currentChild = current.childrenList.get(0);
         if (currentChild.keyList.size() == 2) {
@@ -278,14 +278,112 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
           fixerChildChild.keyList.add(keyToMove);
           fixerChildChild.valueMap.put(keyToMove, valToMove);
           Collections.sort(fixerChildChild.keyList);
-          
-          for (BNode theftChild : current.childrenList) {
-            if (theftChild.keyList.size() > 1) {
-              theftChild
-              break;
+
+          int fixIndex = current.childrenList.indexOf(fixerChild);
+          if (fixIndex == 0) {
+            BNode sibling = current.childrenList.get(1);
+            if (sibling.keyList.size() > 1) {
+              keyToMove = sibling.keyList.remove(0);
+              valToMove = sibling.valueMap.remove(keyToMove);
+
+              current.keyList.add(keyToMove);
+              current.valueMap.put(keyToMove, valToMove);
+              Collections.sort(current.keyList);
+
+              keyToMove = current.keyList.remove(0);
+              valToMove = current.valueMap.remove(keyToMove);
+
+              fixerChild.keyList.add(keyToMove);
+              fixerChild.valueMap.put(keyToMove, valToMove);
+              Collections.sort(fixerChild.keyList);
+
+              fixerChild.childrenList.add(sibling.childrenList.remove(0));
+            }
+            else {
+              keyToMove = current.keyList.remove(0);
+              valToMove = current.valueMap.remove(keyToMove);
+              
+              sibling.keyList.add(keyToMove);
+              sibling.valueMap.put(keyToMove, valToMove);
+              Collections.sort(sibling.keyList);
+              
+              sibling.childrenList.add(0, fixerChild.childrenList.remove(0));
+              current.childrenList.remove(0);
+              if (current.keyList.size() == 0) {
+                current = current.childrenList.get(0);
+              }
+            }
+          } else if (fixIndex == 1) {
+            BNode sibling = current.childrenList.get(0);
+            if (sibling.keyList.size() > 1) {
+              keyToMove = sibling.keyList.remove(1);
+              valToMove = sibling.valueMap.remove(keyToMove);
+
+              current.keyList.add(keyToMove);
+              current.valueMap.put(keyToMove, valToMove);
+              Collections.sort(current.keyList);
+
+              keyToMove = current.keyList.remove(1);
+              valToMove = current.valueMap.remove(keyToMove);
+
+              fixerChild.keyList.add(keyToMove);
+              fixerChild.valueMap.put(keyToMove, valToMove);
+              Collections.sort(fixerChild.keyList);
+
+              fixerChild.childrenList.add(0,
+                  sibling.childrenList.remove(sibling.childrenList.size() - 1));
+            }
+            else {
+              keyToMove = current.keyList.remove(0);
+              valToMove = current.valueMap.remove(keyToMove);
+              
+              sibling.keyList.add(keyToMove);
+              sibling.valueMap.put(keyToMove, valToMove);
+              Collections.sort(sibling.keyList);
+              
+              sibling.childrenList.add(fixerChild.childrenList.remove(0));
+              current.childrenList.remove(1);
+              
+              if (current.keyList.size() == 0) {
+                current = current.childrenList.get(0);
+              }
+            }
+          } else {
+            BNode sibling = current.childrenList.get(1);
+            if (sibling.keyList.size() > 1) {
+              keyToMove = sibling.keyList.remove(1);
+              valToMove = sibling.valueMap.remove(keyToMove);
+
+              current.keyList.add(keyToMove);
+              current.valueMap.put(keyToMove, valToMove);
+              Collections.sort(current.keyList);
+
+              keyToMove = current.keyList.remove(2);
+              valToMove = current.valueMap.remove(keyToMove);
+
+              fixerChild.keyList.add(keyToMove);
+              fixerChild.valueMap.put(keyToMove, valToMove);
+              Collections.sort(fixerChild.keyList);
+
+              fixerChild.childrenList.add(0,
+                  sibling.childrenList.remove(sibling.childrenList.size() - 1));
+            }
+            else {
+              keyToMove = current.keyList.remove(1);
+              valToMove = current.valueMap.remove(keyToMove);
+              
+              sibling.keyList.add(keyToMove);
+              sibling.valueMap.put(keyToMove, valToMove);
+              Collections.sort(sibling.keyList);
+              
+              sibling.childrenList.add(fixerChild.childrenList.remove(0));
+              current.childrenList.remove(2);
+              
+              if (current.keyList.size() == 0) {
+                current = current.childrenList.get(0);
+              }
             }
           }
-          
         }
       }
     }

@@ -68,7 +68,11 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   @Override
-  public void insert(K key, V value) throws DuplicateKeyException {
+  public void insert(K key, V value) throws DuplicateKeyException, NullKeyException {
+    
+    if (key == null) {
+      throw new NullKeyException("The passed key is null.");
+    }
 
     if (null == root) {
       root = new BNode();
@@ -76,9 +80,11 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
       root.valueMap.put(key, value);
       size++;
     }
+    else {
+      root = insert(key, value, root);
+      root = reBalanceInsert(root);
+    }
 
-    root = insert(key, value, root);
-    root = reBalanceInsert(root);
 
     if (root.keyList.size() > 2) {
       // get keys and values to move
@@ -159,21 +165,35 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   @Override
-  public void remove(K key) throws KeyNotFoundException {
+  public void remove(K key) throws KeyNotFoundException, NullKeyException {
 
+    if (key == null) {
+      throw new NullKeyException("The passed key is null.");
+    }
+    
     if (null == root) {
       throw new KeyNotFoundException("Key not found.");
     }
 
     root = remove(key, root);
     root = reBalanceRemove(root);
+    
+    if ((root.keyList.size() == 1) && (root.childrenList.size() == 1)) {
+      BNode rootChild = root.childrenList.remove(0);
+      K keyToMove = rootChild.keyList.remove(0);
+      V valToMove = rootChild.valueMap.remove(keyToMove);
+      root.keyList.add(keyToMove);
+      root.valueMap.put(keyToMove, valToMove);
+      Collections.sort(root.keyList);
+    }
   }
 
   private BNode remove(K key, BNode current) throws KeyNotFoundException {
-
+    
     // if we successfully remove, the key is here. Finish remove and start reBalance
     if (current.keyList.remove(key)) {
       current.valueMap.remove(key);
+      size--;
       current = reBalanceRemove(current);
     }
 
@@ -390,10 +410,10 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     return current;
   }
 
-  private void split(BNode current, BNode toAddNode) {
+  private void split(BNode current, BNode sibling) {
     // get keys and values to move
-    K keyToMove = toAddNode.keyList.remove(1);
-    V valToMove = toAddNode.valueMap.remove(keyToMove);
+    K keyToMove = sibling.keyList.remove(1);
+    V valToMove = sibling.valueMap.remove(keyToMove);
 
     // add them to parent
     current.keyList.add(keyToMove);
@@ -401,25 +421,29 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     Collections.sort(current.keyList);
 
     // split keys and values
-    K keyToSplit = toAddNode.keyList.remove(1);
-    V valToSplit = toAddNode.valueMap.remove(keyToSplit);
+    K keyToSplit = sibling.keyList.remove(1);
+    V valToSplit = sibling.valueMap.remove(keyToSplit);
     BNode newChild = new BNode();
     newChild.keyList.add(keyToSplit);
     newChild.valueMap.put(keyToSplit, valToSplit);
 
     // if there are children, include them in split: move to new child
-    if (toAddNode.childrenList.size() > 0) {
-      newChild.childrenList.add(toAddNode.childrenList.remove(2));
-      newChild.childrenList.add(toAddNode.childrenList.remove(3));
+    if (sibling.childrenList.size() > 0) {
+      newChild.childrenList.add(sibling.childrenList.remove(2));
+      newChild.childrenList.add(sibling.childrenList.remove(3));
     }
 
-    int childIndex = current.childrenList.indexOf(toAddNode);
+    int childIndex = current.childrenList.indexOf(sibling);
     current.childrenList.add(childIndex + 1, newChild);
   }
 
   @Override
-  public V getValue(K key) throws KeyNotFoundException {
+  public V getValue(K key) throws KeyNotFoundException, NullKeyException {
 
+    if (key == null) {
+      throw new NullKeyException("The passed key is null.");
+    }
+    
     return getValue(key, root);
   }
 
@@ -452,8 +476,12 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   @Override
-  public boolean contains(K key) {
+  public boolean contains(K key) throws NullKeyException {
 
+    if (key == null) {
+      throw new NullKeyException("The passed key is null.");
+    }
+    
     return contains(key, root);
   }
 

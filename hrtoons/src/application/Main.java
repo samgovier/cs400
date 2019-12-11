@@ -41,7 +41,19 @@ public class Main extends Application {
       BorderPane root = new BorderPane();
       root.setCenter(vBox1);
       
-      Scene scene = new Scene(root, 400, 400);
+      Tab queryTab = new Tab("Query");
+      queryTab.setContent(vBox1);
+      queryTab.setClosable(false);
+      Tab insertTab = new Tab("Insert");
+      insertTab.setClosable(false);
+      Tab deleteTab = new Tab("Delete");
+      deleteTab.setClosable(false);
+      Tab settingsTab = new Tab("Settings");
+      settingsTab.setClosable(false);
+      
+      TabPane tabPane1 = new TabPane(queryTab, insertTab, deleteTab, settingsTab);
+      
+      Scene scene = new Scene(tabPane1, 400, 400);
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
       primaryStage.setScene(scene);
       primaryStage.show();

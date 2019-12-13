@@ -9,6 +9,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.rules.Timeout;
 import org.junit.runners.MethodSorters;
+import java.util.ArrayList;
 import java.util.Random;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -62,11 +63,9 @@ public class BTreeTests {
         //pass
       }
     } catch (DuplicateKeyException e) {
-      // TODO Auto-generated catch block
       fail("Duplicate Key Exception");
       e.printStackTrace();
     } catch (KeyNotFoundException e) {
-      // TODO Auto-generated catch block
       fail("Key Not Found Exception");
       e.printStackTrace();
     }
@@ -80,11 +79,9 @@ public class BTreeTests {
         btree.insert(intSert, intSert.toString());
         assertTrue("insert failed at test " + i,btree.contains(intSert));
       } catch (DuplicateKeyException e) {
-        // TODO Auto-generated catch block
         fail("Duplicate Key Exception");
         e.printStackTrace();
       } catch (NullKeyException e) {
-        // TODO Auto-generated catch block
         fail("Null Key Exception");
         e.printStackTrace();
       } catch (Exception e) {
@@ -95,20 +92,35 @@ public class BTreeTests {
   
   @Test
   public void test03_RemoveMany() {
+    ArrayList<Integer> intSerted = new ArrayList<Integer>();
     for (int i = 0; i < 600; i++) {
       Integer intSert = rnd.nextInt();
       try {
         btree.insert(intSert, intSert.toString());
         assertTrue(btree.contains(intSert));
-        btree.remove(intSert);
-        assertFalse(btree.contains(intSert));
+        intSerted.add(intSert);
       } catch (DuplicateKeyException e) {
-        // TODO Auto-generated catch block
         fail("Duplicate Key Exception");
         e.printStackTrace();
       } catch (NullKeyException e) {
-        // TODO Auto-generated catch block
         fail("Null Key Exception");
+        e.printStackTrace();
+      } catch (Exception e) {
+        fail("Other Exception");
+        e.printStackTrace();
+      }
+    }
+    
+    for (int i = 0; i <intSerted.size(); i++) {
+      Integer intRemove = intSerted.get(i);
+      try {
+        btree.remove(intRemove);
+        assertFalse(btree.contains(intRemove));
+      } catch (NullKeyException e) {
+        fail("Null Key Exception");
+        e.printStackTrace();
+      } catch (KeyNotFoundException e) {
+        fail("Key Not Found Exception");
         e.printStackTrace();
       } catch (Exception e) {
         fail("Other Exception");
@@ -152,11 +164,9 @@ public class BTreeTests {
         btree.remove(intSert);
         assertFalse(btree.contains(intSert));
       } catch (DuplicateKeyException e) {
-        // TODO Auto-generated catch block
         fail("Duplicate Key Exception");
         e.printStackTrace();
       } catch (NullKeyException e) {
-        // TODO Auto-generated catch block
         fail("Null Key Exception");
         e.printStackTrace();
       } catch (Exception e) {

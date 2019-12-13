@@ -124,23 +124,23 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     if (current.childrenList.size() == 2) {
       K singleKey = current.keyList.get(0);
       if (key.compareTo(singleKey) > 0) {
-        current = insert(key, value, current.childrenList.get(1));
+        current.childrenList.set(1, insert(key, value, current.childrenList.get(1)));
         current = reBalanceInsert(current);
       } else {
-        current = insert(key, value, current.childrenList.get(0));
+        current.childrenList.set(0, insert(key, value, current.childrenList.get(0)));
         current = reBalanceInsert(current);
       }
     }
 
     else if (current.childrenList.size() == 3) {
       if (key.compareTo(current.keyList.get(0)) < 0) {
-        current = insert(key, value, current.childrenList.get(0));
+        current.childrenList.set(0, insert(key, value, current.childrenList.get(0)));
         current = reBalanceInsert(current);
       } else if (key.compareTo(current.keyList.get(1)) > 0) {
-        current = insert(key, value, current.childrenList.get(2));
+        current.childrenList.set(2, insert(key, value, current.childrenList.get(2)));
         current = reBalanceInsert(current);
       } else {
-        current = insert(key, value, current.childrenList.get(1));
+        current.childrenList.set(1, insert(key, value, current.childrenList.get(1)));
         current = reBalanceInsert(current);
       }
     } else {
@@ -200,23 +200,23 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     else if (current.childrenList.size() == 2) {
       K singleKey = current.keyList.get(0);
       if (key.compareTo(singleKey) > 0) {
-        current = remove(key, current.childrenList.get(1));
+        current.childrenList.set(1, remove(key, current.childrenList.get(1)));
         current = reBalanceRemove(current);
       } else {
-        current = remove(key, current.childrenList.get(0));
+        current.childrenList.set(0, remove(key, current.childrenList.get(0)));
         current = reBalanceRemove(current);
       }
     }
 
     else if (current.childrenList.size() == 3) {
       if (key.compareTo(current.keyList.get(0)) < 0) {
-        current = remove(key, current.childrenList.get(0));
+        current.childrenList.set(0, remove(key, current.childrenList.get(0)));
         current = reBalanceRemove(current);
       } else if (key.compareTo(current.keyList.get(1)) > 0) {
-        current = remove(key, current.childrenList.get(2));
+        current.childrenList.set(2, remove(key, current.childrenList.get(2)));
         current = reBalanceRemove(current);
       } else {
-        current = remove(key, current.childrenList.get(1));
+        current.childrenList.set(1, remove(key, current.childrenList.get(1)));
         current = reBalanceRemove(current);
       }
     }

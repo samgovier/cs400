@@ -74,11 +74,11 @@ public class BTreeTests {
   
   @Test
   public void test02_InsertMany() {
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 600; i++) {
       Integer intSert = rnd.nextInt();
       try {
         btree.insert(intSert, intSert.toString());
-        assertTrue(btree.contains(intSert));
+        assertTrue("insert failed at test " + i,btree.contains(intSert));
       } catch (DuplicateKeyException e) {
         // TODO Auto-generated catch block
         fail("Duplicate Key Exception");
@@ -88,15 +88,14 @@ public class BTreeTests {
         fail("Null Key Exception");
         e.printStackTrace();
       } catch (Exception e) {
-        fail("Other Exception");
-        e.printStackTrace();
+        fail("Other Exception\n" + e.getMessage());
       }
     }
   }
   
   @Test
   public void test03_RemoveMany() {
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 600; i++) {
       Integer intSert = rnd.nextInt();
       try {
         btree.insert(intSert, intSert.toString());
@@ -145,7 +144,7 @@ public class BTreeTests {
   
   @Test
   public void test09_containsMany() {
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 600; i++) {
       Integer intSert = rnd.nextInt();
       try {
         btree.insert(intSert, intSert.toString());

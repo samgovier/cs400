@@ -105,8 +105,8 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
 
       // if there are children, include them in split: move to new child
       if (root.childrenList.size() > 0) {
-        newChild.childrenList.add(root.childrenList.remove(2));
         newChild.childrenList.add(root.childrenList.remove(3));
+        newChild.childrenList.add(0, root.childrenList.remove(2));
       }
 
       newRoot.childrenList.add(root);
@@ -155,7 +155,8 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
   }
 
   private BNode reBalanceInsert(BNode current) {
-    for (BNode child : current.childrenList) {
+    for (int i = current.childrenList.size() - 1; i >= 0; i--) {
+      BNode child = current.childrenList.get(i);
       if (child.keyList.size() > 2) {
         split(current, child);
       }
@@ -410,10 +411,10 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     return current;
   }
 
-  private void split(BNode current, BNode sibling) {
+  private void split(BNode current, BNode child) {
     // get keys and values to move
-    K keyToMove = sibling.keyList.remove(1);
-    V valToMove = sibling.valueMap.remove(keyToMove);
+    K keyToMove = child.keyList.remove(1);
+    V valToMove = child.valueMap.remove(keyToMove);
 
     // add them to parent
     current.keyList.add(keyToMove);
@@ -421,19 +422,19 @@ public class BTree<K extends Comparable<K>, V> implements BTreeADT<K, V> {
     Collections.sort(current.keyList);
 
     // split keys and values
-    K keyToSplit = sibling.keyList.remove(1);
-    V valToSplit = sibling.valueMap.remove(keyToSplit);
+    K keyToSplit = child.keyList.remove(1);
+    V valToSplit = child.valueMap.remove(keyToSplit);
     BNode newChild = new BNode();
     newChild.keyList.add(keyToSplit);
     newChild.valueMap.put(keyToSplit, valToSplit);
 
     // if there are children, include them in split: move to new child
-    if (sibling.childrenList.size() > 0) {
-      newChild.childrenList.add(sibling.childrenList.remove(2));
-      newChild.childrenList.add(sibling.childrenList.remove(3));
+    if (child.childrenList.size() > 0) {
+      newChild.childrenList.add(child.childrenList.remove(3));
+      newChild.childrenList.add(0, child.childrenList.remove(2));
     }
 
-    int childIndex = current.childrenList.indexOf(sibling);
+    int childIndex = current.childrenList.indexOf(child);
     current.childrenList.add(childIndex + 1, newChild);
   }
 

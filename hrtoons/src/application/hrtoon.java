@@ -1,18 +1,18 @@
 package application;
 
 public class hrtoon {
-  private Integer id;
+  private int id;
   private String title;
   private String releaseDate;
   private String dow;
   private String type;
-  private Integer easterEggs;
+  private int easterEggs;
   private double runtime;
   
-  public Integer getId() {
+  public int getId() {
     return id;
   }
-  public void setId(Integer id) {
+  public void setId(int id) {
     this.id = id;
   }
   public String getTitle() {
@@ -39,10 +39,10 @@ public class hrtoon {
   public void setType(String type) {
     this.type = type;
   }
-  public Integer getEasterEggs() {
+  public int getEasterEggs() {
     return easterEggs;
   }
-  public void setEasterEggs(Integer easterEggs) {
+  public void setEasterEggs(int easterEggs) {
     this.easterEggs = easterEggs;
   }
   public double getRuntime() {

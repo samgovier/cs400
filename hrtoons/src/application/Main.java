@@ -1,6 +1,7 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Random;
 import javafx.application.Application;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.image.*;
 
@@ -25,20 +27,33 @@ public class Main extends Application {
     try {
 
       // *** QUERY VIEW ***
-
-      // TODO streams --  to process/filter  a collection,  read a file, or both
-      // TODO FILE SAVE
-      
-      Label SearchLabel = new Label("Search: ");
+      Label SearchLabel = new Label("Search on title: ");
       TextField searchField = new TextField();
-      Button searchButton = new Button("Go!");
-      HBox searchBox = new HBox(SearchLabel, searchField, searchButton);
 
-      Label SortLabel = new Label("Sort by: ");
-      ComboBox<String> SortComboBox = new ComboBox<String>();
-      SortComboBox.getItems().addAll("Release Date", "Release DOW", "Type", "Title", "Easter Eggs",
-          "Runtime");
-      HBox SortBox = new HBox(SortLabel, SortComboBox);
+      HBox titleBox = new HBox(SearchLabel, searchField, new Label("\t"));
+
+      Label dowLabel = new Label("Day of Week: ");
+      ComboBox<String> dowComboBox = new ComboBox<String>();
+      dowComboBox.getItems().addAll("", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+          "Saturday", "Sunday");
+      dowComboBox.setValue("");
+      HBox dowBox = new HBox(dowLabel, dowComboBox, new Label("\t"));
+
+      Label typeLabel = new Label("Type: ");
+      ComboBox<String> typeComboBox = new ComboBox<String>();
+      typeComboBox.getItems().addAll("", "Book", "Uncategorized", "Toon", "Intro", "Game", "Short",
+          "Main Page", "Menu", "Marzipan's Answering Machine", "Holiday Toon", "Email",
+          "Powered By The Cheat", "(N/A)", "Blog Entry", "Teen Girl Squad", "Character Video",
+          "Puppet Stuff", "DVD Exclusive", "YouTube", "New Stuff", "Game Trailer", "Endorsement",
+          "SBCG4AP", "Hremail", "Email/Hremail", "Email/Holiday Toon",
+          "Marzipan's Answering Machine/Holiday Toon", "Skills of an Artist",
+          "Holiday Toon/Puppet Stuff", "The Deleteheads Download", "Kickstarter", "Six-Sadded Die");
+      typeComboBox.setValue("");
+      HBox typeBox = new HBox(typeLabel, typeComboBox, new Label("\t"));
+
+      Button goButton = new Button("Go!");
+
+      HBox dataFilterBox = new HBox(titleBox, dowBox, typeBox, goButton);
 
       TableView toonGrid = new TableView();
       TableColumn<String, hrtoon> columnId = new TableColumn<>("ID");
@@ -59,11 +74,45 @@ public class Main extends Application {
       toonGrid.getColumns().addAll(columnId, columnDate, columnDow, columnType, columnTitle,
           columnEasterEggs, runtime);
       toonGrid.setMinHeight(700);
-      VBox queryvBox = new VBox(searchBox, SortBox, toonGrid);
+      VBox queryvBox = new VBox(new Label(""), dataFilterBox, new Label(""), toonGrid);
 
-      // TODO *** STATS VIEW ***
+      goButton.setOnAction(e -> {
+        String searchTitle = searchField.getText();
+        String searchDow = dowComboBox.getValue();
+        String searchType = typeComboBox.getValue();
 
-      
+        ArrayList<hrtoon> toonView = new ArrayList<hrtoon>();
+
+        for (Integer key : toonsIdList) {
+          try {
+            hrtoon testToon = hrtoonsDB.getValue(key);
+            if (testToon.getTitle().contains(searchTitle) && testToon.getDow().contains(searchDow)
+                && testToon.getType().contains(searchType)) {
+              toonView.add(testToon);
+            }
+          } catch (KeyNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+          } catch (NullKeyException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+          }
+        }
+        
+        toonGrid.getItems().clear();
+        toonGrid.getItems().addAll(toonView);
+      });
+      // *** STATS VIEW ***
+
+      Button runStatsButton = new Button("Run Stats");
+      Label showStats = new Label(
+          "Number of Toons: \nAverage Number of Easter Eggs: \nMost Popular Upload Date: ");
+      VBox statBox = new VBox(new Label(""), runStatsButton, showStats);
+
+      runStatsButton.setOnAction(e -> {
+        showStats.setText(MainHelper.runStats(hrtoonsDB));
+      });
+
       // *** INSERT VIEW ***
 
       TextField insertNameField = new TextField();
@@ -77,7 +126,7 @@ public class Main extends Application {
       TextField insertEggsField = new TextField();
       HBox insertEggs = new HBox(new Label("# of Easter Eggs: \t"), insertEggsField);
       TextField insertRuntimeField = new TextField();
-      HBox insertRuntime = new HBox(new Label("Runtime (mm:ss): \t"), insertRuntimeField);
+      HBox insertRuntime = new HBox(new Label("Runtime: \t\t\t"), insertRuntimeField);
       Button insertButton = new Button("Insert");
       VBox insertBox = new VBox(new Label(""), insertName, insertReleaseDate, insertDow, insertType,
           insertEggs, insertRuntime, insertButton);
@@ -103,8 +152,15 @@ public class Main extends Application {
 
           if (eggsInt != null) {
             try {
-              hrtoonsDB.insert(toonsIdList.size(),
-                  new hrtoon(toonsIdList.size(), releaseDate, dow, type, name, eggsInt, runTime));
+              int insertId = (int) Math.pow((new Random()).nextInt(), 2);
+              while (toonsIdList.contains(insertId)) {
+                insertId = (int) Math.pow((new Random()).nextInt(), 2);
+              }
+              hrtoon toonToAdd =
+                  new hrtoon(insertId, releaseDate, dow, type, name, eggsInt, runTime);
+              hrtoonsDB.insert(insertId, toonToAdd);
+              toonsIdList.add(insertId);
+              toonGrid.getItems().add(toonToAdd);
               new Alert(Alert.AlertType.CONFIRMATION, "Insertion Complete.").showAndWait();
             } catch (DuplicateKeyException e1) {
               new Alert(Alert.AlertType.ERROR, "Duplicate ID entered.").showAndWait();
@@ -137,7 +193,9 @@ public class Main extends Application {
 
           if (deleteInt != null) {
             try {
+              toonGrid.getItems().remove(hrtoonsDB.getValue(deleteInt));
               hrtoonsDB.remove(deleteInt);
+              toonsIdList.remove(deleteInt);
               new Alert(Alert.AlertType.CONFIRMATION, "Deletion Complete.").showAndWait();
             } catch (KeyNotFoundException knfEx) {
               new Alert(Alert.AlertType.ERROR, "ID not found.").showAndWait();
@@ -150,19 +208,60 @@ public class Main extends Application {
 
       // *** SETTINGS VIEW ***
 
-      // TODO FILE LOAD
-      TextField loadFile = new TextField();
+      // FILE LOAD
+      TextField loadFileField = new TextField();
+      Button loadButton = new Button("Load");
+      HBox loadFile =
+          new HBox(new Label("Enter path to load CSV file: "), loadFileField, loadButton);
 
-      // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Open Resource File");
-      // fileChooser.showOpenDialog(stage);
+      loadButton.setOnAction(e -> {
+        String newPath = loadFileField.getText();
+        if (newPath.isEmpty() || !newPath.contains(".csv")) {
+          new Alert(Alert.AlertType.ERROR, "Please enter a valid CSV.").showAndWait();
+        } else {
+          try {
+            hrtoonsDB = MainHelper.parseCSV(newPath);
+            toonsIdList = hrtoonsDB.getAllKeys();
+            for (Integer key : toonsIdList) {
+              toonGrid.getItems().add(hrtoonsDB.getValue(key));
+            }
+            new Alert(Alert.AlertType.CONFIRMATION, "Load Complete.").showAndWait();
+          } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Please enter a valid CSV.").showAndWait();
+          }
+        }
+      });
 
+      // FILE SAVE
+      TextField saveFileField = new TextField();
+      Button saveButton = new Button("Save");
+      HBox saveFile =
+          new HBox(new Label("Enter path to save CSV file: "), saveFileField, saveButton);
+
+      saveButton.setOnAction(e -> {
+        String newPath = saveFileField.getText();
+        if (newPath.isEmpty() || !newPath.contains(".csv")) {
+          new Alert(Alert.AlertType.ERROR, "Please enter a valid CSV.").showAndWait();
+        } else {
+          try {
+            MainHelper.saveCSV(hrtoonsDB, newPath);
+            new Alert(Alert.AlertType.CONFIRMATION, "Save Complete.").showAndWait();
+          } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Please enter a valid CSV.").showAndWait();
+          }
+        }
+      });
+
+
+      VBox SettingsBox = new VBox(new Label(""), loadFile, saveFile);
       // *** TAB INIT ***
 
       Tab queryTab = new Tab("Query");
       queryTab.setContent(queryvBox);
       queryTab.setClosable(false);
+      Tab statTab = new Tab("Stats");
+      statTab.setContent(statBox);
+      statTab.setClosable(false);
       Tab insertTab = new Tab("Insert");
       insertTab.setContent(insertBox);
       insertTab.setClosable(false);
@@ -170,9 +269,10 @@ public class Main extends Application {
       deleteTab.setContent(deleteBox);
       deleteTab.setClosable(false);
       Tab settingsTab = new Tab("Settings");
+      settingsTab.setContent(SettingsBox);
       settingsTab.setClosable(false);
 
-      TabPane tabPane1 = new TabPane(queryTab, insertTab, deleteTab, settingsTab);
+      TabPane tabPane1 = new TabPane(queryTab, statTab, insertTab, deleteTab, settingsTab);
 
       // *** SCENE INIT ***
 
@@ -185,11 +285,13 @@ public class Main extends Application {
         }
       } catch (Exception ex) {
         new Alert(Alert.AlertType.INFORMATION, "Select a file on the Settings tab.").showAndWait();
+        csvPath = "";
       }
 
       Scene scene = new Scene(tabPane1, 1300, 800);
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
       primaryStage.setScene(scene);
+      primaryStage.setTitle("Homestar Runner Toons Database");
       primaryStage.show();
     } catch (Exception e) {
       e.printStackTrace();

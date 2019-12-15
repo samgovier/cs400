@@ -26,6 +26,9 @@ public class Main extends Application {
 
       // *** QUERY VIEW ***
 
+      // TODO streams --  to process/filter  a collection,  read a file, or both
+      // TODO FILE SAVE
+      
       Label SearchLabel = new Label("Search: ");
       TextField searchField = new TextField();
       Button searchButton = new Button("Go!");
@@ -58,6 +61,9 @@ public class Main extends Application {
       toonGrid.setMinHeight(700);
       VBox queryvBox = new VBox(searchBox, SortBox, toonGrid);
 
+      // TODO *** STATS VIEW ***
+
+      
       // *** INSERT VIEW ***
 
       TextField insertNameField = new TextField();
@@ -144,6 +150,7 @@ public class Main extends Application {
 
       // *** SETTINGS VIEW ***
 
+      // TODO FILE LOAD
       TextField loadFile = new TextField();
 
       // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
@@ -170,11 +177,14 @@ public class Main extends Application {
       // *** SCENE INIT ***
 
       csvPath = "hrtoons.csv";
-      hrtoonsDB = MainHelper.parseCSV(csvPath);
-      toonsIdList = hrtoonsDB.getAllKeys();
-
-      for (Integer key : toonsIdList) {
-        toonGrid.getItems().add(hrtoonsDB.getValue(key));
+      try {
+        hrtoonsDB = MainHelper.parseCSV(csvPath);
+        toonsIdList = hrtoonsDB.getAllKeys();
+        for (Integer key : toonsIdList) {
+          toonGrid.getItems().add(hrtoonsDB.getValue(key));
+        }
+      } catch (Exception ex) {
+        new Alert(Alert.AlertType.INFORMATION, "Select a file on the Settings tab.").showAndWait();
       }
 
       Scene scene = new Scene(tabPane1, 1300, 800);

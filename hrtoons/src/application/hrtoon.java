@@ -24,7 +24,13 @@
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 package application;
 
+/**
+ * hrtoon is the object class for each HR toon, contains values for each column of the CSV.
+ *
+ */
 public class hrtoon {
+
+  // private fields
   private int id;
   private String title;
   private String releaseDate;
@@ -33,6 +39,7 @@ public class hrtoon {
   private int easterEggs;
   private String runtime;
 
+  // public constructor for all the fields
   public hrtoon(int id, String releaseDate, String dow, String type, String title, int easterEggs,
       String runtime) {
     this.id = id;
@@ -44,6 +51,7 @@ public class hrtoon {
     this.runtime = runtime;
   }
 
+  // getters and setters for each field
   public int getId() {
     return id;
   }

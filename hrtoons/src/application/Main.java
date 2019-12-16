@@ -39,23 +39,36 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.image.*;
 
-
+/**
+ * Main is the javafx application for hrtoons. It has 4 tabs: one for file management, one for
+ * insert, one for remove, and one for data queries.
+ */
 public class Main extends Application {
 
+  // hrtoonsDB is the hrtoons database object
   BTree<Integer, hrtoon> hrtoonsDB;
+
+  // toonsIdList is an arraylist of all the keys in the database
   ArrayList<Integer> toonsIdList;
+
+  // csvPath is the path to the csv file
   String csvPath;
 
+  /**
+   * start launches the javafx application and defines interaction
+   */
   @Override
   public void start(Stage primaryStage) {
     try {
 
       // *** QUERY VIEW ***
+
+      // construct the search field
       Label SearchLabel = new Label("Search on title: ");
       TextField searchField = new TextField();
-
       HBox titleBox = new HBox(SearchLabel, searchField, new Label("\t"));
 
+      // construct the day of week combo selection
       Label dowLabel = new Label("Day of Week: ");
       ComboBox<String> dowComboBox = new ComboBox<String>();
       dowComboBox.getItems().addAll("", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -63,6 +76,7 @@ public class Main extends Application {
       dowComboBox.setValue("");
       HBox dowBox = new HBox(dowLabel, dowComboBox, new Label("\t"));
 
+      // construct the type of toon combo selection
       Label typeLabel = new Label("Type: ");
       ComboBox<String> typeComboBox = new ComboBox<String>();
       typeComboBox.getItems().addAll("", "Book", "Uncategorized", "Toon", "Intro", "Game", "Short",
@@ -75,10 +89,11 @@ public class Main extends Application {
       typeComboBox.setValue("");
       HBox typeBox = new HBox(typeLabel, typeComboBox, new Label("\t"));
 
+      // define the query button and HBox for the query materials
       Button goButton = new Button("Go!");
-
       HBox dataFilterBox = new HBox(titleBox, dowBox, typeBox, goButton);
 
+      // construct the grid of data
       TableView toonGrid = new TableView();
       TableColumn<String, hrtoon> columnId = new TableColumn<>("ID");
       columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -95,18 +110,26 @@ public class Main extends Application {
       TableColumn<String, hrtoon> runtime = new TableColumn<>("Runtime");
       runtime.setCellValueFactory(new PropertyValueFactory<>("runtime"));
 
+      // add the columns
       toonGrid.getColumns().addAll(columnId, columnDate, columnDow, columnType, columnTitle,
           columnEasterEggs, runtime);
       toonGrid.setMinHeight(700);
+
+      // construct the tab
       VBox queryvBox = new VBox(new Label(""), dataFilterBox, new Label(""), toonGrid);
 
+      // when the query button is hit
       goButton.setOnAction(e -> {
+
+        // collect query details
         String searchTitle = searchField.getText();
         String searchDow = dowComboBox.getValue();
         String searchType = typeComboBox.getValue();
 
+        // toonView defines what will be displayed
         ArrayList<hrtoon> toonView = new ArrayList<hrtoon>();
 
+        // for each toon in the DB, if it matches the search add it to the display
         for (Integer key : toonsIdList) {
           try {
             hrtoon testToon = hrtoonsDB.getValue(key);
@@ -115,30 +138,33 @@ public class Main extends Application {
               toonView.add(testToon);
             }
           } catch (KeyNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Bad ID entered. Please restart.").showAndWait();
           } catch (NullKeyException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Bad ID entered. Please restart.").showAndWait();
           }
         }
-        
+
+        // clear the grid and reset the data
         toonGrid.getItems().clear();
         toonGrid.getItems().addAll(toonView);
       });
+
       // *** STATS VIEW ***
 
+      // define the stats tab
       Button runStatsButton = new Button("Run Stats");
       Label showStats = new Label(
           "Number of Toons: \nAverage Number of Easter Eggs: \nMost Popular Upload Date: ");
       VBox statBox = new VBox(new Label(""), runStatsButton, showStats);
 
+      // if the stats button is pressed, run the stats
       runStatsButton.setOnAction(e -> {
         showStats.setText(MainHelper.runStats(hrtoonsDB));
       });
 
       // *** INSERT VIEW ***
 
+      // add a field for each field of the hrtoons object
       TextField insertNameField = new TextField();
       HBox insertName = new HBox(new Label("Title: \t\t\t"), insertNameField);
       TextField insertReleaseDateField = new TextField();
@@ -151,11 +177,16 @@ public class Main extends Application {
       HBox insertEggs = new HBox(new Label("# of Easter Eggs: \t"), insertEggsField);
       TextField insertRuntimeField = new TextField();
       HBox insertRuntime = new HBox(new Label("Runtime: \t\t\t"), insertRuntimeField);
+
+      // define the button for insert
       Button insertButton = new Button("Insert");
       VBox insertBox = new VBox(new Label(""), insertName, insertReleaseDate, insertDow, insertType,
           insertEggs, insertRuntime, insertButton);
 
+      // when the insert button is hit
       insertButton.setOnAction(e -> {
+
+        // get all the field data
         String name = insertNameField.getText();
         String releaseDate = insertReleaseDateField.getText();
         String dow = insertDowField.getText();
@@ -164,27 +195,37 @@ public class Main extends Application {
         Integer eggsInt = null;
         String runTime = insertRuntimeField.getText();
 
+        // if anything is empty, show an error and exit, otherwise continue
         if (name.isEmpty() || releaseDate.isEmpty() || dow.isEmpty() || type.isEmpty()
             || eggs.isEmpty() || runTime.isEmpty()) {
           new Alert(Alert.AlertType.ERROR, "Enter data for each field.").showAndWait();
         } else {
+
+          // try to parse easter eggs
           try {
             eggsInt = Integer.parseInt(eggs);
           } catch (Exception ex) {
             new Alert(Alert.AlertType.ERROR, "Enter a valid number for easter eggs.").showAndWait();
           }
 
+          // continue if easter eggs was parsed
           if (eggsInt != null) {
+
             try {
+
+              // create an insert id by getting a square, to assure a positive number
               int insertId = (int) Math.pow((new Random()).nextInt(), 2);
               while (toonsIdList.contains(insertId)) {
                 insertId = (int) Math.pow((new Random()).nextInt(), 2);
               }
+
+              // insert into the database and confirm insertion. Otherwise display error
               hrtoon toonToAdd =
                   new hrtoon(insertId, releaseDate, dow, type, name, eggsInt, runTime);
               hrtoonsDB.insert(insertId, toonToAdd);
               toonsIdList.add(insertId);
               toonGrid.getItems().add(toonToAdd);
+
               new Alert(Alert.AlertType.CONFIRMATION, "Insertion Complete.").showAndWait();
             } catch (DuplicateKeyException e1) {
               new Alert(Alert.AlertType.ERROR, "Duplicate ID entered.").showAndWait();
@@ -197,15 +238,21 @@ public class Main extends Application {
 
       // *** DELETE VIEW ***
 
+      // create the delete field and button
       Label deleteIdLabel = new Label("Enter ID to delete: ");
       TextField deleteIdField = new TextField();
       deleteIdField.setMaxWidth(300);
       Button deleteButton = new Button("Delete");
       VBox deleteBox = new VBox(new Label(""), deleteIdLabel, deleteIdField, deleteButton);
 
+      // when the delete button is hit
       deleteButton.setOnAction(e -> {
+
+        // get the id for deletion
         String fieldText = deleteIdField.getText();
         Integer deleteInt = null;
+
+        // if nothing was entered or it wasn't an integer, exit, otherwise continue
         if (fieldText.isEmpty()) {
           new Alert(Alert.AlertType.ERROR, "Enter an ID to be deleted.").showAndWait();
         } else {
@@ -214,8 +261,9 @@ public class Main extends Application {
           } catch (Exception ex) {
             new Alert(Alert.AlertType.ERROR, "Enter a valid ID.").showAndWait();
           }
-
           if (deleteInt != null) {
+
+            // try to remove: if it fails, show an error, otherwise show confirmation
             try {
               toonGrid.getItems().remove(hrtoonsDB.getValue(deleteInt));
               hrtoonsDB.remove(deleteInt);
@@ -233,22 +281,31 @@ public class Main extends Application {
       // *** SETTINGS VIEW ***
 
       // FILE LOAD
+
+      // create file load field and button
       TextField loadFileField = new TextField();
       Button loadButton = new Button("Load");
       HBox loadFile =
           new HBox(new Label("Enter path to load CSV file: "), loadFileField, loadButton);
 
+      // when load button is hit
       loadButton.setOnAction(e -> {
+
+        // check that the path is valid
         String newPath = loadFileField.getText();
         if (newPath.isEmpty() || !newPath.contains(".csv")) {
           new Alert(Alert.AlertType.ERROR, "Please enter a valid CSV.").showAndWait();
         } else {
+
+          // try to parse the csv and put it in the query grid
           try {
             hrtoonsDB = MainHelper.parseCSV(newPath);
             toonsIdList = hrtoonsDB.getAllKeys();
             for (Integer key : toonsIdList) {
               toonGrid.getItems().add(hrtoonsDB.getValue(key));
             }
+
+            // show confirmation if successful: otherwise show error
             new Alert(Alert.AlertType.CONFIRMATION, "Load Complete.").showAndWait();
           } catch (Exception ex) {
             new Alert(Alert.AlertType.ERROR, "Please enter a valid CSV.").showAndWait();
@@ -257,16 +314,23 @@ public class Main extends Application {
       });
 
       // FILE SAVE
+
+      // create file save field and button
       TextField saveFileField = new TextField();
       Button saveButton = new Button("Save");
       HBox saveFile =
           new HBox(new Label("Enter path to save CSV file: "), saveFileField, saveButton);
 
+      // when the save button is hit
       saveButton.setOnAction(e -> {
+
+        // check that the path is valid
         String newPath = saveFileField.getText();
         if (newPath.isEmpty() || !newPath.contains(".csv")) {
           new Alert(Alert.AlertType.ERROR, "Please enter a valid CSV.").showAndWait();
         } else {
+
+          // try to save the csv. show confirmation or error
           try {
             MainHelper.saveCSV(hrtoonsDB, newPath);
             new Alert(Alert.AlertType.CONFIRMATION, "Save Complete.").showAndWait();
@@ -276,10 +340,12 @@ public class Main extends Application {
         }
       });
 
-
+      // create the settings view vertical box
       VBox SettingsBox = new VBox(new Label(""), loadFile, saveFile);
+
       // *** TAB INIT ***
 
+      // initialize all tabs and make them un-closable
       Tab queryTab = new Tab("Query");
       queryTab.setContent(queryvBox);
       queryTab.setClosable(false);
@@ -296,22 +362,29 @@ public class Main extends Application {
       settingsTab.setContent(SettingsBox);
       settingsTab.setClosable(false);
 
+      // initialize the full tab pane
       TabPane tabPane1 = new TabPane(queryTab, statTab, insertTab, deleteTab, settingsTab);
 
-      // *** SCENE INIT ***
+      // *** STARTUP INIT ***
 
+      // initialize the database
       csvPath = "hrtoons.csv";
       try {
+
+        // try to parse hrtoons.csv, if it's there
         hrtoonsDB = MainHelper.parseCSV(csvPath);
         toonsIdList = hrtoonsDB.getAllKeys();
         for (Integer key : toonsIdList) {
           toonGrid.getItems().add(hrtoonsDB.getValue(key));
         }
+
+        // if it fails, ask the user to select a file in settings and unset csvPath
       } catch (Exception ex) {
         new Alert(Alert.AlertType.INFORMATION, "Select a file on the Settings tab.").showAndWait();
         csvPath = "";
       }
 
+      // initialize the full javafx scene and title
       Scene scene = new Scene(tabPane1, 1300, 800);
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
       primaryStage.setScene(scene);
@@ -322,6 +395,11 @@ public class Main extends Application {
     }
   }
 
+  /**
+   * main launches the javafx application
+   * 
+   * @param args
+   */
   public static void main(String[] args) {
     launch(args);
   }

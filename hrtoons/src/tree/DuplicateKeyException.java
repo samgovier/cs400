@@ -23,6 +23,7 @@
 //
 /////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
 package tree;
+
 /**
  * Checked exception thrown when a user attempts to insert a duplicate key.
  */

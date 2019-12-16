@@ -36,19 +36,29 @@ import org.junit.runners.MethodSorters;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * BTreeTests tests the BTree.java class to make sure all methods work properly in all cases
+ *
+ */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BTreeTests {
+
+  // btree is the tree used for testing
   private BTree<Integer, String> btree;
+
+  // rnd is used to generate random key/value pairs for insertion
   private Random rnd;
 
   /**
-   * setUp initializes a new btree for each test
+   * setUp initializes a new btree and rnd for each test
    * 
    * @throws Exception
    */
   @Before
   public void setUp() throws Exception {
     this.btree = new BTree<Integer, String>();
+
+    // keep a consistent seed for proper testing
     this.rnd = new Random(313);
   }
 
@@ -63,6 +73,9 @@ public class BTreeTests {
     this.rnd = null;
   }
 
+  /**
+   * Test that exceptions are thrown on null
+   */
   @Test
   public void test01_NullTesting() {
     try {
@@ -103,6 +116,9 @@ public class BTreeTests {
     }
   }
 
+  /**
+   * Test inserting many items: 1000 is double the needed keys for project spec
+   */
   @Test
   public void test02_InsertMany() {
     for (int i = 0; i < 1000; i++) {
@@ -122,6 +138,9 @@ public class BTreeTests {
     }
   }
 
+  /**
+   * Test removing many items: 1000 is double the needed keys for project spec
+   */
   @Test
   public void test03_RemoveMany() {
     ArrayList<Integer> intSerted = new ArrayList<Integer>();
@@ -161,6 +180,9 @@ public class BTreeTests {
     }
   }
 
+  /**
+   * Test getting many items: 1000 is double the needed keys for project spec
+   */
   @Test
   public void test04_getValueMany() {
     for (int i = 0; i < 1000; i++) {
@@ -181,6 +203,9 @@ public class BTreeTests {
     }
   }
 
+  /**
+   * Test a tree that has a single value
+   */
   @Test
   public void test05_singleTesting() {
     try {
@@ -199,6 +224,9 @@ public class BTreeTests {
     }
   }
 
+  /**
+   * Test that height is proper on different levels
+   */
   @Test
   public void test06_height() {
     assertTrue(btree.height() == 0);
@@ -250,6 +278,9 @@ public class BTreeTests {
     assertTrue(btree.height() == 3);
   }
 
+  /**
+   * Test that size is proper after many different iterations
+   */
   @Test
   public void test07_size() {
     assertTrue(btree.size() == 0);
@@ -301,6 +332,9 @@ public class BTreeTests {
     assertTrue(btree.size() == 10);
   }
 
+  /**
+   * Test that getAllKeys returns all keys in many iterations
+   */
   @Test
   public void test08_getAllKeys() {
     assertTrue(btree.getAllKeys().size() == 0);
@@ -317,10 +351,11 @@ public class BTreeTests {
       e.printStackTrace();
     }
     assertTrue(btree.getAllKeys().size() == 21);
-
-
   }
 
+  /**
+   * Test contains on many items: 1000 is double the needed keys for project spec
+   */
   @Test
   public void test09_containsMany() {
     for (int i = 0; i < 1000; i++) {
@@ -343,6 +378,9 @@ public class BTreeTests {
     }
   }
 
+  /**
+   * Test that exceptions are thrown at the proper locations
+   */
   @Test
   public void test10_exceptionTesting() {
     try {
